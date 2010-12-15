@@ -15,4 +15,4 @@ all: $(OBJS) $(PROGS) $(SIMS)
 	ghdl -e $@
 
 clean:
-	rm *.o *.cf $(PROGS) *.vcd
+	rm -f *.o *.cf $(PROGS) *.vcd
