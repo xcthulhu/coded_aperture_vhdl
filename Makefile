@@ -8,7 +8,7 @@ all: $(OBJS) $(PROGS) $(SIMS)
 	ghdl -a $<
 
 %.vcd : %
-	ghdl -r $< --vcd=$@ --stop-time=1000ns
+	ghdl -r $< --vcd=$@
 
 % : %.vhd
 	ghdl -a $<

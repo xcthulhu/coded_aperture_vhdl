@@ -16,13 +16,16 @@ architecture behav of blink_tb is
    signal CLK_33MHZ_FPGA : std_logic ;
 begin
    --  Component instantiation.
-   uut : Clk_div_led generic map ( max_count => 1000000) 
+   uut : Clk_div_led generic map ( max_count => 100) 
                      port map (CLK_33MHZ_FPGA => CLK_33MHZ_FPGA, 
                                GPIO_LED_0 => GPIO_LED_0) ;
    process
+        -- These control the looping we will do
+   constant the_end : integer := 10000;
+   variable count : integer;
    begin
       CLK_33MHZ_FPGA <= '1';
-      loop
+      for count in 0 to the_end loop
 	  wait for 15 ns;
           CLK_33MHZ_FPGA <= not CLK_33MHZ_FPGA;
           wait for 15 ns;
