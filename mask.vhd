@@ -12,15 +12,14 @@ library ieee;
 use ieee.std_logic_1164.all;                                          
 use ieee.numeric_std.all;
                                    
-entity data_process is                                                     
-   port (clk  : in std_logic;                                                   
-         cmd_start  : in std_logic; 
-         finished : out std_logic;
-			valid     : out std_logic;
-			startclk : out std_logic; 
-         test_data : out std_logic_vector(0 to 15)); 
-   end data_process; 
-
+entity data_process is
+  port (clk       : in  std_logic;
+        cmd_start : in  std_logic;
+        finished  : out std_logic;
+        valid     : out std_logic;
+        startclk  : out std_logic;
+        test_data : out std_logic_vector(0 to 15)); 
+end data_process;
 
                                                          
 architecture syn of data_process is                  
