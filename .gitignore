@@ -1,5 +1,6 @@
 # Programs
 blink_tb
+mask_tb
 
 # Data Products
 *.vcd
