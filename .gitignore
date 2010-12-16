@@ -1,0 +1,10 @@
+# Programs
+blink_tb
+
+# Data Products
+*.vcd
+*.o
+*.cf
+\#*
+.#*
+*~
