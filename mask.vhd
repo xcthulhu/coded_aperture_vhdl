@@ -22,9 +22,10 @@ entity data_process is
 end data_process;
 
                                                          
-architecture syn of data_process is                  
-   type state_type is (s0, s1, s2, s3, s4, s5, s6);
-	signal state_reg : state_type;
+architecture syn of data_process is
+  type state_type is (s0, s1, s2, s3, s4, s5, s6);
+  signal state_reg : state_type;
+  
 -- FOLLOWING IS 500 ELEMENT MASK
 --   signal ROM : bit_vector (0 to 499) := 
 --"00000100000000000011"&
@@ -71,7 +72,8 @@ signal ROM : bit_vector (0 to 799) :=
 "00100000010000001001100100000100100000010000011000"&
 "01000000010000000001001000000100001100000100100110"&
 "00111000100000001001000000000100010001000000010010";
--- END OF 800 BIT MASK 
+-- END OF 800 BIT MASK
+  
 -- FOLLOWING IS FOR 2100 BIT MASK
 --"00100110000001000001001000000100001000000100010000"&
 --"00001000000000100100010000110000100000001001000001"&
@@ -150,7 +152,7 @@ signal ROM : bit_vector (0 to 799) :=
  begin  
   
  process (clk)  
- begin                                                                 
+ begin                                                                finished <= '0';  
    if (clk'event and clk = '1' ) then  
 	    case state_reg is 
 --  hold for cmd_start or after process is done          
