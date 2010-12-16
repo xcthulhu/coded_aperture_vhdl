@@ -55,7 +55,7 @@ architecture syn of data_process is
 --"01000100000000000011";
 
 -- FOLLOWING ARE 250 AND 800 BIT MASK VERSIONS
-signal ROM : bit_vector := 
+signal ROM : bit_vector (0 to 799) := 
 "11001100000001000100000100010001000000000100000100"& 
 "11000000001000001000100000100000010000000100010010"&
 "00011000100000000000000001001000001000100100000011"&
@@ -134,7 +134,7 @@ signal ROM : bit_vector :=
 	
 
  type image_array is array (0 to 499) of integer range -2047 to +2047;
- -- type image_array is array (0 to 499) of integer range -32767 to +32768;  -- expand for 10X loop
+ --type image_array is array (0 to 499) of integer range -32767 to +32768;  -- expand for 10X loop
  signal image : image_array := (others=>0);	
 
  constant MINVAL : integer := 692;
@@ -173,7 +173,7 @@ signal ROM : bit_vector :=
 		     valid <= '0';
 		     startclk <= '1';
                  if (nloops = 0) then
-                    image := (others => 0);
+                    image <= (others => 0);
                  end if;
                  if (done = '0') then 
 	              shiftreg <= ROM; 
