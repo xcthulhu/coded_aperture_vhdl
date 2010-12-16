@@ -1,4 +1,4 @@
--- data_process_800.vhd
+-- mask.vhd
 -- 800 bit version
 -- start with events and mask in memory; 
 -- process events with mask and generate image
