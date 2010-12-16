@@ -16,3 +16,5 @@ all: $(OBJS) $(PROGS) $(SIMS)
 
 clean:
 	rm -f *.o *.cf $(PROGS) *.vcd
+	rm -f work/*
+	rm -f *~
