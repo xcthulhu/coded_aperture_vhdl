@@ -1,6 +1,6 @@
-OBJS = blink.o
-PROGS = blink_tb
-SIMS = blink_tb.vcd
+OBJS = blink.o mask.o
+PROGS = blink_tb mask_tb
+SIMS = blink_tb.vcd mask_tb.vcd
 
 all: $(OBJS) $(PROGS) $(SIMS)
 
