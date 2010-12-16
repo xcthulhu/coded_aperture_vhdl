@@ -5,7 +5,7 @@
 --
 -- inputs: cmd_start is triggered by 'cmd_start' signal going high
 --
--- outputs: 'finished' goes high to indicate when process is comlete
+-- outputs: 'finished' goes high to indicate when process is complete
 -- 
 
 library ieee;                                                         
