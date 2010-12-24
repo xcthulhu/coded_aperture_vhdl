@@ -1,6 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.numeric_std.all;
+use std.textio.all;
 
 entity mask_tb is end mask_tb;
 
@@ -31,19 +32,22 @@ begin
               startclk  => startclk,
               test_data => test_data) ;
   process
+    variable l : line;
   begin
     -- Initialize the clock and the start command
     clk       <= '0';
     cmd_start <= '0';
-    wait for 15 ns;
+    wait for 2 ns;
     clk       <= '0';
     cmd_start <= '1';
     -- FIXME:  This should loop until "finished" is high maybe?
-    loop
-      wait for 15 ns;
+    while finished = '0' loop
+      wait for 2 ns;
       clk <= not clk;
-      wait for 15 ns;
+      wait for 2 ns;
     end loop;
+    write (l, string'("Hello world!"));
+    writeline (output, l);
     wait;
   end process;
 end behav;
