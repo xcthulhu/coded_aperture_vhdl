@@ -40,14 +40,11 @@ begin
     wait for 2 ns;
     clk       <= '0';
     cmd_start <= '1';
-    -- FIXME:  This should loop until "finished" is high maybe?
     while finished = '0' loop
       wait for 2 ns;
       clk <= not clk;
       wait for 2 ns;
     end loop;
-    write (l, string'("Hello world!"));
-    writeline (output, l);
     wait;
   end process;
 end behav;

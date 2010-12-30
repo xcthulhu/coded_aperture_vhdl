@@ -8,10 +8,11 @@
 -- outputs: 'finished' goes high to indicate when process is complete
 -- 
 
-library ieee;                                                         
-use ieee.std_logic_1164.all;                                          
+library ieee;
+use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-                                   
+use std.textio.all;
+
 entity data_process is
   port (clk       : in  std_logic;
         cmd_start : in  std_logic;
@@ -21,11 +22,10 @@ entity data_process is
         test_data : out std_logic_vector(0 to 15)); 
 end data_process;
 
-                                                         
+
 architecture syn of data_process is
-  type state_type is (s0, s1, s2, s3, s4, s5, s6);
-  signal state_reg : state_type;
-  
+  signal state_reg : integer range 0 to 5 := 0;
+
 -- FOLLOWING IS 500 ELEMENT MASK
 --   signal ROM : bit_vector (0 to 499) := 
 --"00000100000000000011"&
@@ -55,25 +55,25 @@ architecture syn of data_process is
 --"01000100000000000011";
 
 -- FOLLOWING ARE 250 AND 800 BIT MASK VERSIONS
-signal ROM : bit_vector (0 to 799) := 
-"11001100000001000100000100010001000000000100000100"& 
-"11000000001000001000100000100000010000000100010010"&
-"00011000100000000000000001001000001000100100000011"&
-"00010000100000000001100001000000001100100100000000"&
-"00001001001000000100000000001000110000001000000110"&
-"00001000001000000100010000000010000001100001100100"&
-"10011000001000000001000001000100001100000000001001"&
-"00100011000001001000000000000001100000000000000000"&
-"01001100001000001001000100000000001000001000001001"&
-"00100001100000001001000000000010011000011000011000"&
-"01000001000000000000011001001100010001000000100001"&
-"00100000000000010011000010010001000000000100110000"&
-"00100110000000000100011000000000000000001000000000"&
-"00100000010000001001100100000100100000010000011000"&
-"01000000010000000001001000000100001100000100100110"&
-"00111000100000001001000000000100010001000000010010";
+  signal ROM : bit_vector (0 to 799) :=
+    "11001100000001000100000100010001000000000100000100"&
+    "11000000001000001000100000100000010000000100010010"&
+    "00011000100000000000000001001000001000100100000011"&
+    "00010000100000000001100001000000001100100100000000"&
+    "00001001001000000100000000001000110000001000000110"&
+    "00001000001000000100010000000010000001100001100100"&
+    "10011000001000000001000001000100001100000000001001"&
+    "00100011000001001000000000000001100000000000000000"&
+    "01001100001000001001000100000000001000001000001001"&
+    "00100001100000001001000000000010011000011000011000"&
+    "01000001000000000000011001001100010001000000100001"&
+    "00100000000000010011000010010001000000000100110000"&
+    "00100110000000000100011000000000000000001000000000"&
+    "00100000010000001001100100000100100000010000011000"&
+    "01000000010000000001001000000100001100000100100110"&
+    "00111000100000001001000000000100010001000000010010";
 -- END OF 800 BIT MASK
-  
+
 -- FOLLOWING IS FOR 2100 BIT MASK
 --"00100110000001000001001000000100001000000100010000"&
 --"00001000000000100100010000110000100000001001000001"&
@@ -103,144 +103,139 @@ signal ROM : bit_vector (0 to 799) :=
 --"00100000001000010000001100100001000100000000000011";
 -- END OF 2100 BIT MASK
 
-   signal shiftreg : bit_vector (0 to 799) := (others=>'0');
+  signal shiftreg : bit_vector (0 to 799) := (others => '0');
 
-   type events_array is array (0 to 394) of integer range 0 to 4095;
-	signal events : events_array := (
- 773, 840, 908, 732, 908, 822, 840, 727, 694, 692, 766, 840, 800, 754, 819, 739,
- 775, 858, 749, 726, 865, 783, 730, 923, 726, 735, 903, 777, 752, 856, 730, 917,
- 735, 740, 786, 814, 901, 750, 776, 738, 880, 814, 852, 791, 917, 845, 881, 933,
- 786, 822, 785, 920, 817, 924, 780, 770, 783, 766, 719, 853, 799, 766, 887, 743,
- 767, 730, 730, 911, 813, 920, 786, 814, 901, 750, 776, 738, 880, 814, 852, 791,
- 917, 845, 881, 933, 786, 822, 785, 920, 817, 924, 780, 770, 783, 766, 719, 853,
- 799, 766, 887, 743, 767, 730, 730, 911, 813, 920, 735, 841, 765, 775, 898, 735,
- 738, 765, 941, 735, 866, 848, 800, 845, 731, 845, 892, 730, 750, 750, 910, 865,
- 880, 775, 923, 813, 765, 870, 881, 881, 817, 870, 921, 888, 910, 829, 828, 735,
- 841, 765, 775, 898, 735, 738, 765, 941, 735, 866, 848, 800, 845, 731, 845, 892,
- 730, 750, 750, 910, 865, 880, 775, 923, 813, 765, 870, 881, 881, 817, 870, 921,
- 888, 910, 829, 828, 923, 814, 820, 929, 877, 894, 784, 799, 876, 800, 941, 735,
- 881, 790, 727, 901, 877, 843, 882, 718, 708, 880, 736, 825, 756, 782, 828, 791,
- 721, 781, 891, 892, 789, 841, 766, 753, 717, 743, 915, 923, 814, 820, 929, 877,
- 894, 784, 799, 876, 800, 941, 735, 881, 790, 727, 901, 877, 843, 882, 718, 708,
- 880, 736, 825, 756, 782, 828, 791, 721, 781, 891, 892, 789, 841, 766, 753, 717,
- 743, 915, 708, 813, 814, 726, 727, 778, 909, 877, 918, 735, 766, 839, 716, 894,
- 926, 713, 775, 817, 853, 727, 735, 934, 880, 911, 739, 918, 799, 763, 900, 882,
- 828, 916, 753, 770, 730, 876, 795, 920, 848, 720, 737, 815, 737, 720, 913, 767,
- 793, 776, 898, 708, 813, 814, 726, 727, 778, 909, 877, 918, 735, 766, 839, 716,
- 894, 926, 713, 775, 817, 853, 727, 735, 934, 880, 911, 739, 918, 799, 763, 900,
- 882, 828, 916, 753, 770, 730, 876, 795, 920, 848, 720, 737, 815, 737, 720, 913,
- 767, 793, 776, 898, 726, 925, 882, 881, 832, 770, 913, 853, 909, 730, 750, 694,
- 836, 855, 829, 901, 867, 757, 942, 918, 745, 814, 721, 888, 820, 920, 716, 864,
- 881, 781, 877, 853, 813, 717, 858, 858, 728, 736, 738);
-	
+  type image_array is array (0 to 499) of integer range -2047 to +2047;
+  --type image_array is array (0 to 499) of integer range -32767 to +32768;  -- expand for 10X loop
+  signal image : image_array := (others => 0);
 
- type image_array is array (0 to 499) of integer range -2047 to +2047;
- --type image_array is array (0 to 499) of integer range -32767 to +32768;  -- expand for 10X loop
- signal image : image_array := (others=>0);	
 
- constant MINVAL : integer := 692;
- constant MAXVAL : integer := 942; 
- constant MAXOUTERLOOPS : integer := 620000; 
- constant MAXLOOPS : integer := 395;
+-- type events_array is array (0 to 4) of integer range 0 to 4095;
+--   constant events : events_array := ( 773, 840, 908, 732, 908 );
+  type events_array is array (0 to 394) of integer range 0 to 4095;
+  constant events : events_array := (
+    773, 840, 908, 732, 908, 822, 840, 727, 694, 692, 766, 840, 800, 754, 819, 739,
+    775, 858, 749, 726, 865, 783, 730, 923, 726, 735, 903, 777, 752, 856, 730, 917,
+    735, 740, 786, 814, 901, 750, 776, 738, 880, 814, 852, 791, 917, 845, 881, 933,
+    786, 822, 785, 920, 817, 924, 780, 770, 783, 766, 719, 853, 799, 766, 887, 743,
+    767, 730, 730, 911, 813, 920, 786, 814, 901, 750, 776, 738, 880, 814, 852, 791,
+    917, 845, 881, 933, 786, 822, 785, 920, 817, 924, 780, 770, 783, 766, 719, 853,
+    799, 766, 887, 743, 767, 730, 730, 911, 813, 920, 735, 841, 765, 775, 898, 735,
+    738, 765, 941, 735, 866, 848, 800, 845, 731, 845, 892, 730, 750, 750, 910, 865,
+    880, 775, 923, 813, 765, 870, 881, 881, 817, 870, 921, 888, 910, 829, 828, 735,
+    841, 765, 775, 898, 735, 738, 765, 941, 735, 866, 848, 800, 845, 731, 845, 892,
+    730, 750, 750, 910, 865, 880, 775, 923, 813, 765, 870, 881, 881, 817, 870, 921,
+    888, 910, 829, 828, 923, 814, 820, 929, 877, 894, 784, 799, 876, 800, 941, 735,
+    881, 790, 727, 901, 877, 843, 882, 718, 708, 880, 736, 825, 756, 782, 828, 791,
+    721, 781, 891, 892, 789, 841, 766, 753, 717, 743, 915, 923, 814, 820, 929, 877,
+    894, 784, 799, 876, 800, 941, 735, 881, 790, 727, 901, 877, 843, 882, 718, 708,
+    880, 736, 825, 756, 782, 828, 791, 721, 781, 891, 892, 789, 841, 766, 753, 717,
+    743, 915, 708, 813, 814, 726, 727, 778, 909, 877, 918, 735, 766, 839, 716, 894,
+    926, 713, 775, 817, 853, 727, 735, 934, 880, 911, 739, 918, 799, 763, 900, 882,
+    828, 916, 753, 770, 730, 876, 795, 920, 848, 720, 737, 815, 737, 720, 913, 767,
+    793, 776, 898, 708, 813, 814, 726, 727, 778, 909, 877, 918, 735, 766, 839, 716,
+    894, 926, 713, 775, 817, 853, 727, 735, 934, 880, 911, 739, 918, 799, 763, 900,
+    882, 828, 916, 753, 770, 730, 876, 795, 920, 848, 720, 737, 815, 737, 720, 913,
+    767, 793, 776, 898, 726, 925, 882, 881, 832, 770, 913, 853, 909, 730, 750, 694,
+    836, 855, 829, 901, 867, 757, 942, 918, 745, 814, 721, 888, 820, 920, 716, 864,
+    881, 781, 877, 853, 813, 717, 858, 858, 728, 736, 738);
 
- signal nshifts : integer range 0 to 4095;
- signal done : std_logic := '0';  
- signal nloops : integer range 0 to 750 ;
- signal nval : integer range 0 to 500 ;
- signal nOuterLoops : integer range 0 to MAXOUTERLOOPS + 5; 
- 
- begin  
+  constant MINVAL        : integer := 692;
+  constant MAXVAL        : integer := 942;
+  constant MAXOUTERLOOPS : integer := 620000;
+  constant MAXLOOPS      : integer := events_array'length;
+
+  signal nshifts     : integer range 0 to 4095;
+  signal done        : std_logic := '0';
+  signal nloops      : integer range 0 to 750;
+  signal nval        : integer range 0 to 500;
+  signal nOuterLoops : integer range 0 to MAXOUTERLOOPS + 5;
   
- process (clk)  
- begin                                                                finished <= '0';  
-   if (clk'event and clk = '1' ) then  
-	    case state_reg is 
+begin
+  
+  process (clk)
+
+  begin
+    finished <= '0';
+    if (clk'event and clk = '1') then
+      case state_reg is
 --  hold for cmd_start or after process is done          
-             when s0 =>
-			  valid <= '0';
-			  startclk <= '0';
-			  nOuterLoops <= 0; 
-			  if (cmd_start = '0') then
-			     finished <= '0';
-			     done <= '0';
-			  end if;
-                    if (cmd_start='1' and done = '0') then  
-		           state_reg <= s1;
-   		           nloops <= 0;
-			     startclk <= '1';
-	              end if;
+        when 0 =>
+          valid       <= '0';
+          startclk    <= '0';
+          nOuterLoops <= 0;
+          if (cmd_start = '0') then
+            finished <= '0';
+            done     <= '0';
+          end if;
+          if (cmd_start = '1' and done = '0') then
+            state_reg <= 1;
+            nloops    <= 0;
+            startclk  <= '1';
+          end if;
 --  load shift register and determine number of shifts
-              when s1 =>
-		     valid <= '0';
-		     startclk <= '1';
-                 if (nloops = 0) then
-                    image <= (others => 0);
-                 end if;
-                 if (done = '0') then 
-	              shiftreg <= ROM; 
-                    nshifts <= events(nloops) - MINVAL ; 
-			  nloops <= nloops + 1;
-                    state_reg <= s2;
-                 end if;				
+        when 1 =>
+          valid    <= '0';
+          startclk <= '1';
+          if (nloops = 0) then
+            image <= (others => 0);
+          end if;
+          if (done = '0') then
+            shiftreg  <= ROM;
+            nshifts   <= events(nloops) - MINVAL;
+            nloops    <= nloops + 1;
+            state_reg <= 2;
+          end if;
 --   shift the SR 
-              when s2 =>
-                 valid <= '0';
-                 startclk <= '1';
-                 shiftreg <= shiftreg SLL nshifts;
-                 state_reg <= s3;
---  loop through each bit of SR and change image according to SR bit 	   
-              when s3 => 
-                 valid <= '0';
-                 startclk <= '1';
-                 for i in 0 to 249 loop
-                    if shiftreg(i) = '1' then
-                       image(i) <= image(i) + 4;
-                    else
-                       image(i) <= image(i) - 1;
-                    end if;
-                 end loop; 	
-                 state_reg <= s4;
+        when 2 =>
+          valid     <= '0';
+          startclk  <= '1';
+          shiftreg  <= shiftreg sll nshifts;
+          state_reg <= 3;
+--  loop through each bit of SR and change image according to SR bit       
+        when 3 =>
+          valid    <= '0';
+          startclk <= '1';
+          for i in 0 to 249 loop
+            if shiftreg(i) = '1' then
+              image(i) <= image(i) + 4;
+            else
+              image(i) <= image(i) - 1;
+            end if;
+          end loop;
+          state_reg <= 4;
 --  determine whether all loops have been done
-              when s4 =>
-                 valid <= '0';
-                 startclk <= '1';
-                 if (nloops > (MAXLOOPS-1)) then
-                    state_reg <= s5;
-                 else
-                    state_reg <= s1;
-                 end if;
--- test outer loop 
-              when s5 =>
-                 if (nOuterLoops > (MAXOUTERLOOPS-1)) then
-                    state_reg <= s6;
-                 else 
-                    nOuterloops <= nOuterLoops + 1;
-                    nloops <= 0;
-                    state_reg <= s1;
-                 end if;	
-		
+        when 4 =>
+          valid    <= '0';
+          startclk <= '1';
+          if (nloops > (MAXLOOPS-1)) then
+            state_reg <= 5;
+          else
+            state_reg <= 1;
+          end if;
+
 --  output 250 image elements then its done   
-              when s6 => 
-                 if (nloops > (MAXLOOPS + 249)) then
-                    nloops <= 0;
-                    finished <= '1'; 
-                    done <= '1';
-                    state_reg <= s0;
-                    valid <= '0';
-                    startclk <= '0';
+        when 5 =>
+          if (nloops > (MAXLOOPS + 249)) then
+            nloops    <= 0;
+            finished  <= '1';
+            done      <= '1';
+            state_reg <= 0;
+            valid     <= '0';
+            startclk  <= '0';
 -- don't clear for now
---					for i in 0 to 249 loop
---					   image(i) <= 0;
---                            end loop; 	
-                 else 
-                    test_data <= std_logic_vector(to_signed(image(nloops-MAXLOOPS),16)); 
-                    valid <= '1';	
-                    startclk <= '1';
-                    state_reg <= s6;						
-                    nloops <= nloops + 1; 					
-                 end if;
-          end case;
-      end if;
-   end process;
+--                                      for i in 0 to 249 loop
+--                                         image(i) <= 0;
+--                            end loop;         
+          else
+            test_data <= std_logic_vector(to_signed(image(nloops-MAXLOOPS), 16));
+            valid     <= '1';
+            startclk  <= '1';
+            state_reg <= 5;
+            nloops    <= nloops + 1;
+          end if;
+      end case;
+    end if;
+  end process;
 end syn;
-	
+
