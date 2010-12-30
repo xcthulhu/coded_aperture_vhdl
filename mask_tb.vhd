@@ -2,6 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.numeric_std.all;
 use std.textio.all;
+use work.common_decs.all;
 
 entity mask_tb is end mask_tb;
 
@@ -45,6 +46,10 @@ begin
       clk <= not clk;
       wait for 2 ns;
     end loop;
+    --for i in 0 to 15 loop
+    --  write (l, string'(integer'image(0)));
+    --  writeline (output, l);
+    --end loop;
     wait;
   end process;
 end behav;

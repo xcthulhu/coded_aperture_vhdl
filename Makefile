@@ -1,20 +1,22 @@
 OBJS = blink.o mask.o
+PACKAGES = common_decs.o rom.o
 PROGS = blink_tb mask_tb
 SIMS = blink_tb.vcd mask_tb.vcd
+GHDL = ghdl
 
-all: $(OBJS) $(PROGS) $(SIMS)
+all: $(PACKAGES) $(OBJS) $(PROGS) $(SIMS)
 
 %.o : %.vhd
-	ghdl -a $<
+	$(GHDL) -a $< 
 
 %.vcd : %
-	ghdl -r $< --vcd=$@
+	$(GHDL) -r $< --vcd=$@
 
 % : %.vhd
-	ghdl -a $<
-	ghdl -e $@
+	$(GHDL) -a $<
+	$(GHDL) -e $@
 
 clean:
 	rm -f *.o *.cf $(PROGS) *.vcd
-	rm -f work/*
+	rm -rf work
 	rm -f *~

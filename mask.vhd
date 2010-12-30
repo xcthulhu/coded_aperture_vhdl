@@ -12,6 +12,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use std.textio.all;
+use work.common_decs.all;
 
 entity data_process is
   port (clk       : in  std_logic;
@@ -109,47 +110,18 @@ architecture syn of data_process is
   --type image_array is array (0 to 499) of integer range -32767 to +32768;  -- expand for 10X loop
   signal image : image_array := (others => 0);
 
+  -- type events_array is array (0 to 394) of integer range 0 to 4095;
 
--- type events_array is array (0 to 4) of integer range 0 to 4095;
---   constant events : events_array := ( 773, 840, 908, 732, 908 );
-  type events_array is array (0 to 394) of integer range 0 to 4095;
-  constant events : events_array := (
-    773, 840, 908, 732, 908, 822, 840, 727, 694, 692, 766, 840, 800, 754, 819, 739,
-    775, 858, 749, 726, 865, 783, 730, 923, 726, 735, 903, 777, 752, 856, 730, 917,
-    735, 740, 786, 814, 901, 750, 776, 738, 880, 814, 852, 791, 917, 845, 881, 933,
-    786, 822, 785, 920, 817, 924, 780, 770, 783, 766, 719, 853, 799, 766, 887, 743,
-    767, 730, 730, 911, 813, 920, 786, 814, 901, 750, 776, 738, 880, 814, 852, 791,
-    917, 845, 881, 933, 786, 822, 785, 920, 817, 924, 780, 770, 783, 766, 719, 853,
-    799, 766, 887, 743, 767, 730, 730, 911, 813, 920, 735, 841, 765, 775, 898, 735,
-    738, 765, 941, 735, 866, 848, 800, 845, 731, 845, 892, 730, 750, 750, 910, 865,
-    880, 775, 923, 813, 765, 870, 881, 881, 817, 870, 921, 888, 910, 829, 828, 735,
-    841, 765, 775, 898, 735, 738, 765, 941, 735, 866, 848, 800, 845, 731, 845, 892,
-    730, 750, 750, 910, 865, 880, 775, 923, 813, 765, 870, 881, 881, 817, 870, 921,
-    888, 910, 829, 828, 923, 814, 820, 929, 877, 894, 784, 799, 876, 800, 941, 735,
-    881, 790, 727, 901, 877, 843, 882, 718, 708, 880, 736, 825, 756, 782, 828, 791,
-    721, 781, 891, 892, 789, 841, 766, 753, 717, 743, 915, 923, 814, 820, 929, 877,
-    894, 784, 799, 876, 800, 941, 735, 881, 790, 727, 901, 877, 843, 882, 718, 708,
-    880, 736, 825, 756, 782, 828, 791, 721, 781, 891, 892, 789, 841, 766, 753, 717,
-    743, 915, 708, 813, 814, 726, 727, 778, 909, 877, 918, 735, 766, 839, 716, 894,
-    926, 713, 775, 817, 853, 727, 735, 934, 880, 911, 739, 918, 799, 763, 900, 882,
-    828, 916, 753, 770, 730, 876, 795, 920, 848, 720, 737, 815, 737, 720, 913, 767,
-    793, 776, 898, 708, 813, 814, 726, 727, 778, 909, 877, 918, 735, 766, 839, 716,
-    894, 926, 713, 775, 817, 853, 727, 735, 934, 880, 911, 739, 918, 799, 763, 900,
-    882, 828, 916, 753, 770, 730, 876, 795, 920, 848, 720, 737, 815, 737, 720, 913,
-    767, 793, 776, 898, 726, 925, 882, 881, 832, 770, 913, 853, 909, 730, 750, 694,
-    836, 855, 829, 901, 867, 757, 942, 918, 745, 814, 721, 888, 820, 920, 716, 864,
-    881, 781, 877, 853, 813, 717, 858, 858, 728, 736, 738);
 
-  constant MINVAL        : integer := 692;
-  constant MAXVAL        : integer := 942;
-  constant MAXOUTERLOOPS : integer := 620000;
-  constant MAXLOOPS      : integer := events_array'length;
+  -- These should not be constants; they are all calculated
+  constant MINVAL   : integer := 692;
+  constant MAXVAL   : integer := 942;
+  constant MAXLOOPS : integer := events_array'length;
 
-  signal nshifts     : integer range 0 to 4095;
-  signal done        : std_logic := '0';
-  signal nloops      : integer range 0 to 750;
-  signal nval        : integer range 0 to 500;
-  signal nOuterLoops : integer range 0 to MAXOUTERLOOPS + 5;
+  signal nshifts : integer range 0 to 4095;
+  signal done    : std_logic := '0';
+  signal nloops  : integer range 0 to 750;
+  signal nval    : integer range 0 to 500;
   
 begin
   
@@ -161,9 +133,8 @@ begin
       case state_reg is
 --  hold for cmd_start or after process is done          
         when 0 =>
-          valid       <= '0';
-          startclk    <= '0';
-          nOuterLoops <= 0;
+          valid    <= '0';
+          startclk <= '0';
           if (cmd_start = '0') then
             finished <= '0';
             done     <= '0';
@@ -223,10 +194,6 @@ begin
             state_reg <= 0;
             valid     <= '0';
             startclk  <= '0';
--- don't clear for now
---                                      for i in 0 to 249 loop
---                                         image(i) <= 0;
---                            end loop;         
           else
             test_data <= std_logic_vector(to_signed(image(nloops-MAXLOOPS), 16));
             valid     <= '1';
