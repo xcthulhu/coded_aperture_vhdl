@@ -9,47 +9,47 @@ entity mask_tb is end mask_tb;
 architecture behav of mask_tb is
   component data_process is
     port (clk       : in  std_logic;
-          reset : in  std_logic;
+          reset     : in  std_logic;
+          --waiting   : in  std_logic;
+          --event     : in  event_type;
           finished  : out std_logic;
-          valid     : out std_logic;
-          startclk  : out std_logic;
-          test_data : out std_logic_vector(0 to 15));
+          image_out : out image_array);
   end component;
   -- The device under test is the data_process
   for dut          : data_process use entity work.data_process;
   signal clk       : std_logic;
-  signal reset : std_logic;
+  signal reset     : std_logic;
+  --signal waiting   : std_logic;
+  --signal event     : event_type;
   signal finished  : std_logic;
-  signal valid     : std_logic;
-  signal startclk  : std_logic;
-  signal test_data : std_logic_vector(0 to 15);
+  signal image_out : image_array;
 begin
   --  Component instantiation.
   dut : data_process
     port map (clk       => clk,
-              reset => reset,
+              reset     => reset,
+              --waiting   => waiting,
+              --event     => event,
               finished  => finished,
-              valid     => valid,
-              startclk  => startclk,
-              test_data => test_data) ;
+              image_out => image_out) ;
   process
     variable l : line;
   begin
-    -- Initialize the clock and the start command
-    clk       <= '0';
+    -- Reset the unit
+    clk   <= '0';
     reset <= '1';
     wait for 2 ns;
-    clk       <= '0';
+    clk   <= '1';
     reset <= '0';
     while not (finished = '1') loop
       wait for 2 ns;
       clk <= not clk;
       wait for 2 ns;
     end loop;
-    --for i in 0 to 15 loop
-    --  write (l, string'(integer'image(0)));
-    --  writeline (output, l);
-    --end loop;
+    for i in 0 to image_size loop
+      write (l, string'(integer'image(image_out(i))));
+      writeline (output, l);
+    end loop;
     wait;
   end process;
 end behav;
