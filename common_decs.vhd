@@ -1,4 +1,6 @@
 package common_decs is
+  -- We should just use std_logic_vectors as counters
+  type image_array is array (0 to 499) of integer range -2047 to +2047;
   type events_array is array (0 to 394) of integer;
   constant  events : events_array := (
     773, 840, 908, 732, 908, 822, 840, 727, 694, 692, 766, 840, 800, 754, 819, 739,
