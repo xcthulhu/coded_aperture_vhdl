@@ -7,34 +7,34 @@ use work.common_decs.all;
 entity mask_tb is end mask_tb;
 
 architecture behav of mask_tb is
-  component data_process is
+  component mask is
     port (clk       : in  std_logic;
           reset     : in  std_logic;
           event     : in  event_type;
           waiting   : in  std_logic;
-          idle : out std_logic;
+          idle      : out std_logic;
           image_out : out image_array);
   end component;
-  -- The device under test is the data_process
-  for dut          : data_process use entity work.data_process;
+  -- The device under test is the mask
+  for dut          : mask use entity work.mask;
   signal clk       : std_logic;
   signal reset     : std_logic;
   signal waiting   : std_logic;
   signal event     : event_type;
-  signal idle : std_logic;
+  signal idle      : std_logic;
   signal image_out : image_array;
 begin
   --  Component instantiation.
-  dut : data_process
+  dut : mask
     port map (clk       => clk,
               reset     => reset,
               event     => event,
               waiting   => waiting,
-              idle => idle,
+              idle      => idle,
               image_out => image_out) ;
   process
-    variable l      : line;
-    variable n : integer := 0;
+    variable l     : line;
+    variable n     : integer := 0;
     variable oidle : std_logic;
   begin
     -- Reset the unit
@@ -53,11 +53,11 @@ begin
       event <= events(n);
       oidle := idle;
       wait for 1 ns;
-      clk <= not clk;
+      clk   <= not clk;
       wait for 1 ns;
-      
+
       -- A poor man's rising_edge()
-      if (idle='1' and idle /= oidle) then
+      if (idle = '1' and idle /= oidle) then
 --        report integer'image(n);
         n := n + 1;
       end if;
