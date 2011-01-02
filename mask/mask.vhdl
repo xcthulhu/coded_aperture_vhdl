@@ -33,10 +33,6 @@ architecture syn of mask is
   signal state_reg : integer range 1 to 2 := 1;
   signal shiftreg  : bit_vector (0 to (rom'length -1));
   signal image     : image_array;
-
-  -- This is calculated in terms of the events array
-  constant MINVAL : integer := 692;
-  
 begin
   process (clk)
   begin
@@ -55,7 +51,7 @@ begin
               -- If there's data waiting, prepare the barrel
               -- shifter, and leave the idle state
               idle      <= '0';
-              shiftreg  <= ROM sll (event - MINVAL);
+              shiftreg  <= ROM sll event;
               state_reg <= 2;
             end if;
 
