@@ -15,4 +15,4 @@ events_fixed = map(int, filter(lambda x : x != "",
                        list(itertools.chain(*events))))
 min_event = min(events_fixed)
 for event in events_fixed:
-    print >>fout, event - min_event
+    print >>fout, event

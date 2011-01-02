@@ -4,6 +4,10 @@ use IEEE.numeric_std.all;
 use std.textio.all;
 use work.common_decs.all;
 
+-- Using C functions hacked into VHDL *IS* cheating...
+library C;
+use C.stdio_h.all;
+
 entity mask_tb is end mask_tb;
 
 architecture behav of mask_tb is
@@ -17,9 +21,9 @@ architecture behav of mask_tb is
   end component;
   -- The device under test is the mask
   for dut          : mask use entity work.mask;
-  signal clk       : std_logic;
+  signal clk       : std_logic := '0';
   signal reset     : std_logic;
-  signal waiting   : std_logic;
+  signal waiting   : std_logic := '1';
   signal event     : event_type;
   signal idle      : std_logic;
   signal image_out : image_array;
@@ -32,43 +36,48 @@ begin
               waiting   => waiting,
               idle      => idle,
               image_out => image_out) ;
+
+  -- Clock behavior
+  clk <= unaffected when waiting = '0'
+         else not clk after 1 ns;
   process
-    variable l     : line;
+    variable fin   : CFILE;
     variable n     : integer := 0;
     variable oidle : std_logic;
   begin
-    -- Reset the unit
-    clk   <= '0';
+    -- Acquire data from "events.dat"
+    -- and set up first event
+    fin   := fopen("events.dat", "r");
+    fscanf(fin, "%d", n);
+    event <= n;
+    
+    -- Reset the mask array
     reset <= '1';
-    wait for 1 ns;
-    clk   <= '1';
-    wait for 1 ns;
+    wait for 2 ns;
     reset <= '0';
 
-    -- Main loop
-    waiting <= '1';
---    while finished /= '1' loop
-    while n < events'length loop
-      -- Fixme: Not very elegant
-      event <= events(n);
+    -- Enter the main loop
+    while true loop
+      -- This is messy and I wish I didn't need oidle
+      --wait on idle until idle = '0';
       oidle := idle;
       wait for 1 ns;
-      clk   <= not clk;
-      wait for 1 ns;
-
-      -- A poor man's rising_edge()
-      if (idle = '1' and idle /= oidle) then
---        report integer'image(n);
-        n := n + 1;
+      if idle = '1' and idle /= oidle then
+        if feof(fin) then exit;
+        else
+          fscanf(fin, "%d", n);
+          event <= n;
+        end if;
       end if;
     end loop;
+    fclose(fin);
     waiting <= '0';
 
-    -- Output results
+    -- Print the results
     for i in 0 to image_size loop
-      write (l, string'(integer'image(image_out(i))));
-      writeline (output, l);
+      printf("%d\n", image_out(i));
     end loop;
+    
     wait;
   end process;
 end behav;
