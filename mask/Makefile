@@ -8,10 +8,13 @@ OBJS=mask.o
 PROGS=mask_tb
 SIMS=mask_tb.vcd
 
-all: $(C_VHDL) $(PACKAGES) $(OBJS) $(PROGS) $(SIMS)
+all: $(C_VHDL) garrett $(PACKAGES) $(OBJS) $(PROGS) $(SIMS)
 
 $(C_VHDL):
 	$(MAKE) -C ../c_vhdl all 
+
+garrett:
+	$(MAKE) -C garrett all
 
 mask.o: mask.vhdl $(PACKAGES) 
 	$(VHDL_C) $<
@@ -27,6 +30,7 @@ mask_tb.vcd: $(PROGS) $(OBJS) $(PACKAGES) $(C_VHDL)
 	$(VHDL_C) $<
 
 clean:
+	$(MAKE) -C garrett clean
 	rm -f *.o *.cf $(PROGS) *.vcd
 	rm -rf work
 	rm -f *~

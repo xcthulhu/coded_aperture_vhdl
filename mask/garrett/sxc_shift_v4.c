@@ -5,44 +5,59 @@
 
 #define rand01() (lrand48() / 2147483648.0)
 
-double gaus()
-{
-  double sum = 0.0;
-  short i;
-
-  for( i = 0; i < 12; i++ ) sum += rand01();
-  sum -= 6.0;
-
-  return( sum );
-}
-
 typedef  short int16 ;
 
-/* Get the appropriate values of "MASK_SIZE" and "mask" from mask.h" */
+/* read_int_array() reads an array of integers from a file, 
+ * and returns the size.
+ * ...Not as fast as possible, but it doesn't matter for 
+ * small files */
+int read_int_array(char * fn, int **iptr) {
+  FILE * fp = fopen(fn, "r");
+  int i, size = 0;
+  while (! feof(fp)) { fscanf(fp, "%*d "); size++; }
+  *iptr = malloc(sizeof(int)*size);
+  freopen(fn,"r",fp);
+  for (i=0; i<size; i++) { fscanf(fp, "%d", (*iptr) + i); }
+  fclose(fp);
+  return size;
+}
 
-/* Here is the 1D HETE SXC mask,  MASK_SIZE = 2100
-
-1 = open
-0 = closed
-
-*/
-
-int SR[MASK_SIZE];
-
-int  DATA_SIZE = -1 ;  
-int  MinEvtValue = 999999 ;
-int  MaxEvtValue = -9999 ;
+/* int_array_range() calculates the range of an array, 
+ * along with min and max values as side-effects */
+int int_array_range(int *iptr, int size, 
+                    int *min, int *max) {
+  if (size <= 0) { *min = *max = 0; }
+  else {
+    int i;
+    *min = *max = iptr[0];
+    for (i = 0; i < size; i++) {
+      if (iptr[i] > *max) { *max = iptr[i]; }
+      if (iptr[i] < *min) { *min = iptr[i]; } } }
+  return *max - *min + 1;
+}
 
 int main (int argc, char **argv)
 {
-    int   i, j, k, l, m, test1, test2 ;
-    int   min_image, max_image ;
-    int   min_image_idx, max_image_idx ;
-    int   ie,ev;
-    int     Nevent;
-    int     Nstart;
-    int     Noff;
-    int     Ndata;
+    // Read in the event array and the mask
+    int *events, *mask;
+    int EVENT_SIZE = read_int_array("events.dat", &events);
+    int MASK_SIZE = read_int_array("mask.dat", &mask);
+    // Calculate the min, max, and range of events[]
+    int MinEvtValue, MaxEvtValue;
+    int DATA_SIZE = int_array_range(events, EVENT_SIZE, 
+                               &MinEvtValue, &MaxEvtValue);
+
+    int i, j, k, l, m, test1, test2 ;
+    int min_image, max_image ;
+    int min_image_idx, max_image_idx ;
+    int ie,ev;
+    int Nevent;
+    int Nstart;
+    int Noff;
+    int Ndata;
+    int SR[MASK_SIZE];
+
+/* Get the appropriate values of "MASK_SIZE" and "mask" from mask.h" */
 
     int16   *data ;
     int16   image[MASK_SIZE] ;
@@ -61,9 +76,7 @@ int main (int argc, char **argv)
 
 /* use a set of  500 events of real Sco X-1 data*/
     Nevent = 500;
-    /*
-    Nstart = 5000;
-    */
+    // Nstart = 5000;
     Nstart = 0;
     Noff   = 400;
     ie = 0;
@@ -92,19 +105,7 @@ int main (int argc, char **argv)
 /* Scan for the minimum and maximum values of "events".  This will
  * determine the size of "data".
  */
-for (i = 0; i < ie; i++)
-    {
-    if (events[i] > MaxEvtValue)
-        {
-	MaxEvtValue = events[i] ;
-	}
-    if (events[i] < MinEvtValue)
-        {
-	MinEvtValue = events[i] ;
-	}
-    }
 
-    DATA_SIZE = MaxEvtValue - MinEvtValue + 1 ;
     data = (int16 *) malloc ((size_t) (DATA_SIZE * sizeof(int16))) ;
     Ndata  = DATA_SIZE;
 
@@ -271,7 +272,7 @@ for (i = 0; i < ie; i++)
 	     /* If "mask[ev]" is "1", then it's open (+4), */
              image[j] += 4;
            } else {
-	     /* If "mask[ev]" is "0", then it's closed (-1) */
+	     // If "mask[ev]" is "0", then it's closed (-1)
              image[j] -= 1;
            }
       }  
