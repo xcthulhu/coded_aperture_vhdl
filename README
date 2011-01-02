@@ -2,6 +2,8 @@ This software is distributed under the GNU Public License v3
 
 blink: A simple hello world VHDL program, adapted from: http://www.armadeus.com/wiki/index.php?title=Simple_blinking_LED
 
-c_vhdl: Implementations of stdio.h, stdlib.h, and other standard C libraries in VHDL.  This is invaluable for writing debugging code.  Originally based on research found here: http://bear.ces.case.edu/VHDL/index.html
+c_vhdl: Implementations of stdio.h, stdlib.h, and other standard C libraries in VHDL.  This is invaluable for writing debugging code.  Originally based on research found here: 
+http://bear.ces.case.edu/VHDL/index.html
+http://fpgalibre.sourceforge.net/ingles.html#CVHDL
 
 mask: An implementation of the logic behind a 1D coded aperture.  Uses c_vhdl for bench-testing.
