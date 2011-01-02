@@ -1,0 +1,18 @@
+$Log: Changelog,v $.
+Revision 1.3  2005/04/04 18:47:32  salvador
+* Agregado: Más explicaciones sobre el uso.
+
+Revision 1.2  2005/04/04 18:37:37  salvador
+* Modificado: Aplicados los cambios para que funcione con GHDL. No fue
+necesario aplicar el cambio de no cerrar archivos "NULL" ya que el GHDL
+0.18 lo tolera.
+
+Revision 1.1  2005/04/04 18:29:01  salvador
+* Movido al nuevo CVS y revertido el código al original para guardar los
+cambios.
+* Descomprimido el original para poder tenerlo mejor.
+
+-- Previo CVS
+Revision 1.1  2005/03/04 15:06:22  salvador
+* Movido al CVS.
+

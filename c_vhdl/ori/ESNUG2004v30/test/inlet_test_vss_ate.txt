@@ -1,0 +1,19 @@
+Synopsys 1076 VHDL Simulator Version 2000.12 -- Dec 26, 2000
+
+	        Copyright (c) 1990-2000 by Synopsys, Inc.
+	                    ALL RIGHTS RESERVED
+	This program is proprietary and confidential information
+	of  Synopsys, Inc. and may be used and disclosed only as
+	authorized in a  license agreement  controlling such use
+	and disclosure.
+
+
+--begin test;
+fin:=fopen(inlet_out, w); fout=1
+fin:=fopen(pipe2, r); fin=4
+vhdl external input: s=0xx10uhh
+vhdl external input: s=0123
+vhdl external input: s=uuuu
+vhdl external input: s=-23
+--end test;
+(vhdlsim): Simulation complete, time is 0 NS.

@@ -1,0 +1,169 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-language" CONTENT="en">
+<META NAME="keywords"
+  CONTENT="ESNUG SNUG Unix C rsh pipes language VHDL packages vsim vcom vhdlan vhdlsim vhdle vhdlp ModelSim Symphony EDA SYNOPSYS dc_shell synthesis simulation testbench source code CAD">
+<META NAME="description"
+  CONTENT="VHDL Unix/C compatable libraries">
+<META NAME="rating" CONTENT="General">
+<META NAME="revisit-after" CONTENT="15 days">
+<META NAME="ROBOTS" CONTENT="ALL">
+<TITLE>VHDL: Unix/C compatible libraries</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="WHITE"> <font size=4> <BR>
+<CENTER>
+<H2>Public Domain VHDL packages</H2>
+<H2>Presented at: <a HREF="http://www.snug-universal.org">Synopsys SNUG and ESNUG conferences</a></H2>
+<IMG SRC="index_bar.gif" WIDTH="100%"> 
+<BR>
+<h3>New version 3.0 (June 6, 2004) improved for Unix/PC Readme: <a href="README.txt">README.txt</a></h3>
+<IMG SRC="index_bar.gif" WIDTH="100%"> 
+<BR>
+<h3>Latest archive of this webpage: <a href="../ESNUG2003v30.zip">ESNUG2003v30.zip</a></h3>
+<h3>Latest archive of this webpage: <a href="../ESNUG2003v30.tar.gz">ESNUG2003v30.tar.gz</a></h3>
+<h3>*** 2004 update*** SNUG 2002 slides (with additional notes on Unix pipes &amp; pipes for co-simulation with other external EDA tools like Matlab):
+<a href="doc/snug2002_20040606_slides.pdf">snug2002_200200606_slides.pdf</a></h3>
+<h3>SNUG 2002 paper: <a href="doc/snug2002_20020313_paper.pdf">snug2002_20020313_paper.pdf</a></h3>
+
+<table border=1 width="90%">
+<TR>
+<TD>Library source</TD>
+<TD>Version</TD>
+<TD>Testbench source</TD>
+<TD>Testbench shell script</TD>
+<TD>Testbench output </TD>
+</TR>
+<TR>
+<TD><A HREF="source/ctype_h.vhd">ctype_h.vhd</a></TD><TD>3.0</TD>
+<TD><A HREF="test/ctype_h_test.vhd">ctype_h_test.vhd</a></TD>
+<TD>
+<A HREF="test/ctype_h_test.bash">ctype_h_test.bash</a><P>
+<A HREF="source/debug/ctype_h/ctypetest.bat">ctypetest.bat</a>
+</TD>
+<TD>
+<A HREF="test/ctype_h_test_vss_ate.txt">ctype_h_test_vss_ate.txt</a><P>
+<A HREF="test/ctype_h_test_vsim_ate.txt">ctype_h_test_vsim_ate.txt</a><P>
+<A HREF="source/debug/ctype_h/ctype_h_test_vhdle_ate.txt">ctype_h_test_vhlde_ate.txt</a>
+</TD>
+</TR>
+<TR>
+<TD><A HREF="source/endian_h.vhd">endian_h.vhd </a></TD><TD>3.0</TD>
+<TD><A HREF="test/endian_h_test.vhd">endian_h_test.vhd</a></TD>
+<TD>
+<A HREF="source/debug/endian_h/endiantest.bash">endian_h_test.bash</a><P>
+<A HREF="source/debug/endian_h/endiantest.bat">endiantest.bat</a></P>
+<A HREF="source/debug/endian_h/endianclean.bash">endianclean.bat</a>
+</TD>
+<TD>
+<A HREF="test/endian_h_test_vss_ate.txt">endian_h_test_vss_ate.txt</a><P>
+<A HREF="test/endian_h_test_vsim_ate.txt">endian_h_test_vsim_ate.txt</a><P>
+<A HREF="source/debug/endian_h/endian_h_test_vhdle_ate.txt">endian_h_test_vhdle_ate.txt</a><P>
+</TD>
+</TR>
+<TR>
+<TD><A HREF="source/debugio_h.vhd">debugio_h.vhd</a></TD><TD>3.0</TD>
+<TD><A HREF="test/debugio_h_test.vhd">debugio_h_test.vhd</a></TD>
+<TD>
+<A HREF="test/debugio_h_test.bash">debugio_h_test.bash</a><P>
+<A HREF="source/debug/debugio_h/debugiotest.bat">debugiotest.bat</a>
+</TD>
+<TD>
+<A HREF="test/debugio_h_test_vss_ate.txt">debugio_h_test_vss_ate.txt</a><P>
+<A HREF="test/debugio_h_test_vsim_ate.txt">debugio_h_test_vsim_ate.txt</a><P>
+<A HREF="source/debug/debugio_h/debugio_h_test_vhdle_ate.txt">debugio_h_test_vhdle_ate.txt</a>
+</TD>
+</TR>
+<TR>
+<TD><A HREF="source/regexp_h.vhd">regexp_h.vhd</a></TD><TD>3.0</TD>
+<TD><A HREF="test/regexp_h_test.vhd">regexp_h_test.vhd</a></TD>
+<TD>
+<A HREF="test/regexp_h_test.bash">regexp_h_test.bash</a><P>
+<A HREF="source/debug/regexp_h/regexptest.bat">regexptest.bat</a>
+</TD>
+<TD>
+<A HREF="test/regexp_h_test_vss_ate.txt">regexp_h_test_vss_ate.txt</a><P>
+<A HREF="test/regexp_h_test_vsim_ate.txt">regexp_h_test_vsim_ate.txt</a><P>
+<A HREF="source/debug/regexp_h/regexp_h_test_vhdle_ate.txt">regexp_h_test_vhdle_ate.txt</a>
+</TD>
+</TR>
+<TR>
+<TD>
+<A HREF="source/stdio_h.vhd">stdio_h.vhd (generated stdio.bash)</a><P>
+<A HREF="source/debug/stdio_h/stdiomake.bash">stdiomake.bash</a><P>
+<A HREF="source/debug/stdio_h/stdio_h_head.vhd">stdio_h_head.vhd</a><P>
+<A HREF="source/debug/stdio_h/stdio_h_tail.vhd">stdio_h_tail.vhd</a><P>
+<A HREF="source/debug/stdio_h/stdio_h_1args.vhd">stdio_h_1args.vhd</a><P>
+<A HREF="source/debug/stdio_h/stdio_h_2args.vhd">stdio_h_2args.vhd</a>
+</TD>
+<TD>3.0</TD>
+<TD><A HREF="test/stdio_h_test.vhd">stdio_h_test.vhd</a></TD>
+<TD>
+<A HREF="source/debug/stdio_h/stdiotest.bash">stdiotest.bash</a><P>
+<A HREF="source/debug/stdio_h/stdioclean.bash">stdioclean.bash</a><P>
+<A HREF="source/debug/stdio_h/stdiotest.bat">stdiotest.bat</a><P>
+<A HREF="test/stdio_h_test.bash">stdio_h_test.bash</a><P>
+<A HREF="test/stdio_h_test.c">stdio_h_test.c</a>
+</TD>
+<TD>
+<A HREF="test/stdio_h_test_vss_ate.txt">stdio_h_test_vss_ate.txt</a><P>
+<A HREF="test/stdio_h_test_vsim_ate.txt">stdio_h_test_vsim_ate.txt</a><P>
+<A HREF="source/debug/stdio_h/stdio_h_test_vhdle_ate.txt">stdio_h_test_vhdle_ate.txt</a>
+</TD>
+</TR>
+<TR>
+<TD><A HREF="source/stdlib_h.vhd">stdlib_h.vhd</a></TD><TD>3.0</TD>
+<TD><A HREF="test/stdlib_h_test.vhd">stdlib_h_test.vhd</a></TD>
+<TD>
+<A HREF="test/stdlib_h_test.bash">stdlib_h_test.bash</a><P>
+<A HREF="source/debug/stdlib_h/stdlibtest.bat">stdlibtest.bat</a>
+</TD>
+<TD>
+<A HREF="test/stdlib_h_test_vss_ate.txt">stdlib_h_test_vss_ate.txt</a><P>
+<A HREF="test/stdlib_h_test_vsim_ate.txt">stdlib_h_test_vsim_ate.txt</a><P>
+<A HREF="source/debug/stdlib_h/stdlib_h_test_vhdle_ate.txt">stdlib_h_test_vhdle_ate.txt</a>
+</TD>
+</TR>
+<TR>
+<TD><A HREF="source/strings_h.vhd">strings_h.vhd </a></TD><TD>3.0</TD>
+<TD><A HREF="test/strings_h_test.vhd">strings_h_test.vhd</a></TD>
+<TD>
+<A HREF="test/strings_h_test.bash">strings_h_test.bash</a><P>
+<A HREF="source/debug/strings_h/stringstest.bat">stringstest.bat</a>
+</TD>
+<TD>
+<A HREF="test/strings_h_test_vss_ate.txt">strings_h_test_vss_ate.txt</a><P>
+<A HREF="test/strings_h_test_vsim_ate.txt">strings_h_test_vsim_ate.txt</a><P>
+<A HREF="source/debug/strings_h/strings_h_test_vhdle_ate.txt">strings_h_test_vhdle_ate.txt</a>
+</TD>
+</TR>
+<TR>
+<TD><A HREF="source/inlet.c">inlet.c</a></TD>
+<TD>3.0</TD>
+<TD><A HREF="test/inlet_test.vhd">inlet_test.vhd</a></TD>
+<TD>
+<A HREF="source/debug/inlet/inlettest.bash">inlettest.bash</a><P>
+<A HREF="test/inlet_test.bash">inlet_test.bash</a><P>
+<A HREF="test/inlet_test_file.txt">inlet_test_file.txt</a>
+</TD>
+<TD><A HREF="test/inlet_test_vss_ate.txt">inlet_test_vss_ate.txt</a></TD>
+</TR>
+</TABLE>
+</CENTER>
+<P>
+Common vhdl simulator test utilities<P>
+<A HREF="setup.bat">setup.bat</a><P>
+<A HREF="bin/dos2bash.bat">bin/dos2bash.bat</a><P>
+<A HREF="bin/dos2pwd1.bat">bin/dos2pwd1.bat</a><P>
+<A HREF="bin/setup.bash">bin/setup.bash</a><P>
+<A HREF="test/test_sfxvhdl.bash">test/test_sfxvhdl.bash</a><P>
+<A HREF="test/cleanup.bash">test/cleanup.bash</a><P>
+<A HREF="bin/dossites.txt">Unix commands and bash shell for msdos</a><P>
+<P>
+Previous version: <a href="ESNUG2002v21_old.tar.gz">ESNUG2002v21_old.tar.gz</a>
+Other VHDL tools: <A HREF="http://bear.ces.cwru.edu/tools.html">Other Useful EDA CAD tools</A>
+<P>
+Return to: <A HREF="http://bear.ces.cwru.edu">VLSI CAD Home Page</A>
+</BODY>
+</HEAD>
+

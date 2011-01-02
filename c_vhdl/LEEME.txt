@@ -1,0 +1,51 @@
+Author:  Francis G. Wolff   Email: fxw12@po.cwru.edu
+Author:  Michael J. Knieser Email: mjknieser@knieser.com
+Makefiles and GHDL test:
+Copyright (c) 2005 Salvador E. Tropea <salvador en inti gov ar>
+Copyright (c) 2005 Instituto Nacional de Tecnología Industrial
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+ 02111-1307, USA
+
+Esta librería VHDL emula buena parte de la librería estandar de C. Fue creada
+por el grupo de usuarios de Synopsys y bajada de:
+
+http://bear.ces.cwru.edu/vhdl/
+
+Corresponde a la versión 3.0 del 2004.
+
+Esto se compila bien con GHDL los problemas que encontré:
+
+1) Hay un test que necesita --ieee=synopys. Para no complicar el Makefile lo
+que hice fue copiar y pegarle las funcioncitas de synopsys que usaba.
+2) En stdio si la llamada a abrir un archivo falla la rutina fopen llama
+a file_close, pero si el stream falló en abrirse es file_close(NULL) y muere.
+[Nota: GHDL 0.18 soluciona esto]
+3) No probé el que usa pipes.
+
+Para probarlo basta hacer "make" esto analiza los paquetes, corre una serie
+de tests y muestra las diferencias entre el valor esperado y el obtenido. Las
+únicas diferencias son el redondeo de algunos números de coma flotante.
+
+El nombre de la "library" es "c" por lo que para usarlo es:
+
+Library c;
+Use c.stdio_h.all;
+
+Un ejemplo de uso: "test_use/hello.vhdl"
+
+Para mayor información leer la documentación que está en:
+
+ori/ESNUG2004v30/

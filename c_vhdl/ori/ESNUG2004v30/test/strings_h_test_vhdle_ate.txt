@@ -1,0 +1,36 @@
+Symphony EDA (R) VHDL Compiler/Simulator Module VhdlE, Version 1.5, Build#16a.
+Copyright(C) Symphony EDA 1997-2001. All rights reserved.
+Reading C:\Program Files\Symphony EDA\VHDL Simili 1.5\bin\symphony.ini ...
+Library 'ieee'		==> $SYMPHONY/Lib/Ieee/Ieee.sym (readonly)
+Library 'work'		==> work.sym
+Reading  work.sym\strings_h_test_cfg\prim.var
+Reading  work.sym\strings_h_test\_strings_h_test_arch.var
+Library 'c'		==> c.sym
+Reading  c.sym\strings_h\_body.var
+Reading  c.sym\debugio_h\_body.var
+	# of Signals       = 0
+	# of Components    = 0
+	# of Processes     = 2
+	# of Drivers       = 0
+Design Load/Elaboration Elapsed Time: 00h:00m:00s:067ms
+--begin test;
+hello, world: strings_h_test
+strlen('abcde'): 5==5
+strlen('abcde'+4): 2==2
+strlen('123'): 3==3
+strcpy(s, ''): []==[]
+abcdefgh==abcdefgh
+abc1234==abc1234
+cdefgh==cdefgh
+ab_CDE==ab_CDE
+strcat: abcd123==abcd123
+strcat: abcd23==abcd23
+strcat: 123==123
+s[2..$]=ello, world
+strlen('lo, world'): 9==9
+s[2..$]='lo, world'==lo, world
+s[2..$]='wo'==wo
+s[2..$]='hexyz'==hexyz
+--end test;
+Simulation stopped at: 0 ps
+Simulation Elapsed Time: 00h:00m:00s:005ms

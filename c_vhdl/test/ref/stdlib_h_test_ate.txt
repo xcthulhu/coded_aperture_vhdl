@@ -1,0 +1,14 @@
+--begin test;
+hello, world: stdlib_h_test
+strtoul base=10 123=123 endptr= 4=4
+strtoul base=8   64=83 endptr= 4=4
+strtoul base=16 291=291 endptr= 4=4
+strtoul base=16 291=291 endptr= 4=4
+strtoul base=0  123=123 endptr= 4=4
+strtoul base=0   83=83 endptr= 5=5
+strtoul base=0  291=291 endptr= 6=6
+strtoul base=0  291=291 endptr= 6=6
+atoi    base=10 123=123
+atoi    base=10 -123=-123
+atoi    base=10 +123=123
+--end test;

@@ -1,0 +1,79 @@
+Symphony EDA (R) VHDL Compiler/Simulator Module VhdlE, Version 1.5, Build#16a.
+Copyright(C) Symphony EDA 1997-2001. All rights reserved.
+Reading C:\Program Files\Symphony EDA\VHDL Simili 1.5\bin\symphony.ini ...
+Library 'ieee'		==> $SYMPHONY/Lib/Ieee/Ieee.sym (readonly)
+Library 'work'		==> work.sym
+Reading  work.sym\regexp_h_test_cfg\prim.var
+Reading  work.sym\regexp_h_test\_regexp_h_test_arch.var
+Library 'c'		==> c.sym
+Reading  c.sym\regexp_h\_body.var
+Reading  c.sym\strings_h\_body.var
+Reading  c.sym\stdlib_h\_body.var
+Reading  c.sym\ctype_h\_body.var
+Reading  $SYMPHONY\Lib\Ieee\Ieee.sym\std_logic_1164\_body.var
+	# of Signals       = 0
+	# of Components    = 0
+	# of Processes     = 2
+	# of Drivers       = 0
+Design Load/Elaboration Elapsed Time: 00h:00m:00s:136ms
+--begin test;
+%+ #-0.0s    ::
+0.0s    ::
+10s     :hello, world:
+10.0s   :          :
+.10s    :hello, wor:
+0.10s   :hello, wor:
+-10s    :hello, world:
+-10.0s  :          :
+.15s    :hello, world:
+0.15s   :hello, world:
+-15s    :hello, world   :
+-15.0s  :               :
+15.10s  :     hello, wor:
+-15.10s :hello, wor     :
+-5.10s  :hello, wor     :
+true=1
+false=0
+bit=1
+b1=00110101
+b2=01010011
+vu1=0LWXU1Z-
+v1=0LWXU1Z-
+v2=0LWXU1Z-
+std_logic=1
+std_ulogic=0
+-15  =:10001:
+-1   =:11:
+-1   =:-1:
+s  -7=:1001:
+u  -7=:9:
+d  -7=:-7:
++15  =:11110:
+d    =:15:
+#3d  =:1945:
+ 3d  =: 1945:
+ +3d =:+1945:
++ 3d =:+1945:
++3d  =:+1945:
+3d   =:1945:
+3d   =:-1945:
+10x  =:       e99:
+10x  =:       16e:
+10x  =:     0xe99:
+10x  =:     0x16e:
+-1945=:111001100001:
+10d  =:      1945:
+10d  =:     -1945:
+010d =:0000001945:
+010d =:-000001945:
+ 010d=:0000001945:
+ 010d=:-000001945:
++010d=:+000001945:
++010d=:-000001945:
+s    =:10011001111:
+10s  =:10011001111:
+  d  =:-103:
+10d  =:      -103:
+--end test;
+Simulation stopped at: 0 ps
+Simulation Elapsed Time: 00h:00m:00s:037ms

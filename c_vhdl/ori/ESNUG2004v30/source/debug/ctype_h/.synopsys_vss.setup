@@ -1,0 +1,11 @@
+--Unix commands to show setup:
+--       /home2/synopsys/sparcOS5/sim/bin/show_vss_setup
+--       /home2/synopsys/sparcOS5/sim/bin/show_setup
+--
+WORK                > DEFAULT
+DEFAULT             : ./WORK
+C                   : ./C
+TIMEBASE            = ns
+CS_CCPATH_SPARCOS5  = /usr/local/bin/gcc
+CY_CCPATH_SPARCOS5  = /usr/local/bin/gcc
+PROMPT_STD_INPUT    = TRUE

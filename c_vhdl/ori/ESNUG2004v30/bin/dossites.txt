@@ -1,0 +1,4 @@
+ftp://ftp.delorie.com/pub/djgpp/alpha/v2gnu/
+http://www.simtel.net/pub/msdos/
+http://garbo.uwasa.fi/pc/unix.html
+http://home.wanadoo.nl/fvu/Projects/Bash/Web/bash.htm

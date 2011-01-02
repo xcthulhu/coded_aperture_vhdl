@@ -1,0 +1,32 @@
+Symphony EDA (R) VHDL Compiler/Simulator Module VhdlE, Version 1.5, Build#16a.
+Copyright(C) Symphony EDA 1997-2001. All rights reserved.
+Reading C:\Program Files\Symphony EDA\VHDL Simili 1.5\bin\symphony.ini ...
+Library 'ieee'		==> $SYMPHONY/Lib/Ieee/Ieee.sym (readonly)
+Library 'work'		==> work.sym
+Reading  work.sym\stdlib_h_test_cfg\prim.var
+Reading  work.sym\stdlib_h_test\_stdlib_h_test_arch.var
+Library 'c'		==> c.sym
+Reading  c.sym\stdlib_h\_body.var
+Reading  c.sym\ctype_h\_body.var
+Reading  $SYMPHONY\Lib\Ieee\Ieee.sym\std_logic_1164\_body.var
+	# of Signals       = 0
+	# of Components    = 0
+	# of Processes     = 2
+	# of Drivers       = 0
+Design Load/Elaboration Elapsed Time: 00h:00m:00s:083ms
+--begin test;
+hello, world: stdlib_h_test
+strtoul base=10 123=123 endptr= 4=4
+strtoul base=8   64=83 endptr= 4=4
+strtoul base=16 291=291 endptr= 4=4
+strtoul base=16 291=291 endptr= 4=4
+strtoul base=0  123=123 endptr= 4=4
+strtoul base=0   83=83 endptr= 5=5
+strtoul base=0  291=291 endptr= 6=6
+strtoul base=0  291=291 endptr= 6=6
+atoi    base=10 123=123
+atoi    base=10 -123=-123
+atoi    base=10 +123=123
+--end test;
+Simulation stopped at: 0 ps
+Simulation Elapsed Time: 00h:00m:00s:003ms

@@ -1,0 +1,7 @@
+--begin test;
+hello, world
+abc=abc 
+5==(5)
+-25==[-25]
+123==123 456==456
+--end test;

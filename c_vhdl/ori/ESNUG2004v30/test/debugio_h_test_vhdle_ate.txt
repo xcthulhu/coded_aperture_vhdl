@@ -1,0 +1,25 @@
+Symphony EDA (R) VHDL Compiler/Simulator Module VhdlE, Version 1.5, Build#16a.
+Copyright(C) Symphony EDA 1997-2001. All rights reserved.
+Reading C:\Program Files\Symphony EDA\VHDL Simili 1.5\bin\symphony.ini ...
+Library 'ieee'		==> $SYMPHONY/Lib/Ieee/Ieee.sym (readonly)
+Library 'work'		==> work.sym
+Reading  work.sym\debugio_h_test_cfg\prim.var
+Reading  work.sym\debugio_h_test\_debugio_h_test_arch.var
+Library 'c'		==> c.sym
+Reading  c.sym\ctype_h\_body.var
+Reading  $SYMPHONY\Lib\Ieee\Ieee.sym\std_logic_1164\_body.var
+Reading  c.sym\debugio_h\_body.var
+	# of Signals       = 0
+	# of Components    = 0
+	# of Processes     = 2
+	# of Drivers       = 0
+Design Load/Elaboration Elapsed Time: 00h:00m:00s:081ms
+--begin test;
+hello, world
+abc=abc 
+5==(5)
+-25==[-25]
+123==123 456==456
+--end test;
+Simulation stopped at: 0 ps
+Simulation Elapsed Time: 00h:00m:00s:013ms

@@ -1,0 +1,167 @@
+Synopsys 1076 VHDL Simulator Version 2000.12 -- Dec 26, 2000
+
+	        Copyright (c) 1990-2000 by Synopsys, Inc.
+	                    ALL RIGHTS RESERVED
+	This program is proprietary and confidential information
+	of  Synopsys, Inc. and may be used and disclosed only as
+	authorized in a  license agreement  controlling such use
+	and disclosure.
+
+
+abc def
+std_logic_vector(15 downto 0)=12AF=1111010101001000
+std_logic_vector(15 downto 0)=012A=0101010010000000
+integer=27=27
+%s=hello,
+scanf=  12ab 456   
+%d=12
+%s=11010101010010000
+%x=12ab
+%o=1
+scanf=  01001100 456   
+bool %s=0
+bool %x=0
+bit %s=0
+bit %x=0
+scanf=  11001100 456   
+bool %s=1
+bool %x=1
+bit %s=1
+bit %x=1
+b07 %s=11001100
+b07 %x=33
+b70 %s=11001100
+b70 %x=33
+scanf=  H10Xhlwu 456   
+std_logic %s=H
+sl1 %x=0
+v07 %s=H10XHLWU
+v07 %x=02
+v70 %s=H10XHLWU
+v70 %x=02
+  hello,  world
+ 123 9bc
+%xyz++abc
+***%...def 555
+s=hel==hel
+fgetc(1..5)=[lo, ]==[lo, ]
+s=world==world
+s=123==123
+s=9bc==09bc
+std_logic_vector=0X10010
+std_logic=1
+std_logic_vector=:0X10010   :
+std_logic       =:1         :
+%+ #-0.0s   ::
+%0.0s    ::
+%10s     :hello, world:
+%10.0s   :          :
+%.10s    :hello, wor:
+%0.10s   :hello, wor:
+%-10s    :hello, world:
+%-10.0s  :          :
+%.15s    :hello, world:
+%0.15s   :hello, world:
+%-15s    :hello, world   :
+%-15.0s  :               :
+%15.10s  :     hello, wor:
+%-15.10s :hello, wor     :
+%-5.10s  :hello, wor     :
+true     =:1:
+false    =:0:P
+b07      =:11001100:
+b07      =:11001100:
+b70      =:11001100:
+v07      =:H10XHLWU:
+v70      =:H10XHLWU:
+std_logic=:H:
+%s   -15=:10001:
+%s    -1=:11:
+%d    -1=:-1:
+%s    -7=:1001:
+%u    -7=:9:
+%d    -7=:-7:
+%s    15=:11110:
+%d    15=:15:
+%#3d    =:1945:
+% 3d    =: 1945:
+% +3d   =:+1945:
+%+ 3d   =:+1945:
+%+3d    =:+1945:
+%3d     =:1945:
+%3d     =:-1945:
+%10x    =:       799:
+%10x    =:       867:
+%10x    =:     0x799:
+%10x    =:     0x867:
+%s -1945=:111001100001:
+%10d    =:      1945:
+%10d    =:     -1945:
+%010d   =:0000001945:
+%010d   =:-000001945:
+% 010d  =:0000001945:
+% 010d  =:-000001945:
+%+010d  =:+000001945:
+%+010d  =:-000001945:
+bit_vector       %s    =:10011001111:
+bit_vector       %10s  =:10011001111:
+bit_vector       %d    =:-103:
+bit_vector       %10d  =:      -103:
+std_logic_vector %d    =:-103:
+std_logic_vector %10d  =:      -103:
+std_logic_vector %u    =:1945:
+std_logic_vector %10u  =:      1945:
+std_logic_vector %x    =:799:
+std_logic_vector %#x   =:799:
+std_logic_vector %10x  =:       799:
+std_logic_vector %o    =:3631:
+std_logic_vector %#o   =:3631:
+std_logic_vector %10o  =:      3631:
+helloX
+helloY
+s=(hello)
+i=5
+hello1
+hello2
+w'length==0==0 ()
+sprintf=(hello3
+hello4
+)
+w'length==14==14
+sscanf unused=(  456  )
+sscanf matched=(123abch)
+i=7
+sscanf unused=(3abch  456  )
+sscanf matched=(12)
+i=2
+sscanf unused=(abch  456   )
+sscanf matched=(11011110)
+i=8
+sscanf unused=(h   456   )
+sscanf matched=(0011110101011100010010000)
+sscanf matched=(0123abc)
+i=25
+-------------Bug Fix for Version 22---------------
+printf(%d = 3 == 3);
+printf(%s = 110 == 110);
+printf(%x = 3 == 3);
+printf(%s = 0010 == 0010);
+printf(%x = 4 == 4);
+printf(%s = 1010 == 1010);
+printf(%x = 5 == 5);
+printf(%s = 110010 == 110010);
+printf(%x = 13 == 13);
+scanf(12, %d,i);  printf(%d = 12);
+scanf(12, %d,i);  printf(%s = 00110 == 00110);
+scanf(12, %d,i);  printf(%x = 0c);
+scanf(12, %x,i);  printf(%d = 18);
+scanf(12, %x,i);  printf(%s = 010010);
+scanf(12, %x,i);  printf(%x = 12);
+scanf(80, %x,i);  printf(%s = 000000010 == 0000000010);
+scanf(80, %x,i);  printf(%x = 080);
+scanf(80, %x,i);  printf(%d = 128);
+scanf(128,%d,i);  printf(%x = 080);
+scanf(128,%d,i);  printf(%d = 128);
+printf(%x = 128, 128);
+printf(%d = 128, 128);
+(vhdlsim): Simulation complete, time is 0 NS.

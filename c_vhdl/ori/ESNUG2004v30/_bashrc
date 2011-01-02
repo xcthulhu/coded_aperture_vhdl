@@ -1,0 +1,11 @@
+	# Display ls with colors
+alias ls='ls --color'
+alias dir='ls --color'
+alias erase='rm'
+alias type='cat'
+	# Set prompt
+PS1='${PWD}$'
+	# Add current directory to path
+PATH=".;$PATH"
+TMP='/tmp'
+TEMP='/tmp'

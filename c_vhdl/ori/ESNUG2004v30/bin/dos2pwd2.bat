@@ -1,0 +1,1 @@
+set DOS2PWD=C:\fgwolff\ESNUG2002v20\ESNUG2002v22\msdos

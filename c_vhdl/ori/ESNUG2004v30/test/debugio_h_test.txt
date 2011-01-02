@@ -1,0 +1,18 @@
+Synopsys 1076 VHDL Simulator Version 2000.12 -- Dec 26, 2000
+
+	        Copyright (c) 1990-2000 by Synopsys, Inc.
+	                    ALL RIGHTS RESERVED
+	This program is proprietary and confidential information
+	of  Synopsys, Inc. and may be used and disclosed only as
+	authorized in a  license agreement  controlling such use
+	and disclosure.
+
+
+--begin test;
+hello, world
+abc=abc 
+5==(5)
+-25==[-25]
+123==123 456==456
+--end test;
+(vhdlsim): Simulation complete, time is 0 NS.

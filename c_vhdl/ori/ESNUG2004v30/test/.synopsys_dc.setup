@@ -1,0 +1,55 @@
+company = "Case Western Reserve University" ;
+designer = "Francis G. Wolff";
+view_background = "blue";
+
+/* ------------------------------------------------------------- */
+/* Setup SEARCH_PATH to point to the library installation area   */
+/* containing the appropriate symbol and synthesis libraries.    */
+/* ------------------------------------------------------------- */
+
+search_path = { . ./WORK /home2/synopsys/2000.05/libraries/syn }
+
+/* ------------------------------------------------------------- */
+/*   Setup library variables to access the appropriate           */
+/*   lsi 10k donated to Synopsys libraries.                      */
+/* ------------------------------------------------------------- */
+
+target_library = { "class.db" }
+
+/* file types end in db: .db and .sldb (=.sl + db) */
+link_library = { "class.db" \
+ "dw_foundation.sldb" \
+ dw01.sldb dw02.sldb dw03.sldb dw04.sldb dw05.sldb \
+ dw06.sldb dw07.sldb }
+
+/* file types: .sdb (.s + db) */
+
+/* symbol_library = { class.sdb } */
+symbol_library = { class.sdb generic.sdb lsi_10k.sdb }
+
+define_design_lib WORK -path ./WORK
+
+/* ------------------------------------------------------------- */
+/*   EDIF interface Variables                                    */
+/* ------------------------------------------------------------- */
+/* EDIF Output Variables */
+edifout_netlist_only = "true";
+edifout_power_and_ground_representation = "net";
+edifout_power_net_name = "VDD";
+edifout_ground_net_name = "GND";
+net_name_layer.visible= "true"
+pin_name_layer.visible= "true"
+db2sge_display_instance_names = "true"
+db2sge_display_pin_names = "true"
+db2sge_display_symbol_names = "true"
+
+edifout_no_array = true
+compile_fix_multiple_port_nets = true
+bus_naming_style = "%s<%d>"
+bus_dimension_separator_style = "><"
+bus_inference_style = "%s<%d>"
+
+edifout_dc_script_flag = "altera"
+edifout_write_attributes = "true"
+edifout_write_properties_list = {CHIP_PIN_LC LOGIC_OPTION LUT_FUNCTION}
+
