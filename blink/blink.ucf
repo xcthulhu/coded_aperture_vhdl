@@ -1,0 +1,7 @@
+# Clock at 100MHz
+NET "Clk" LOC = "N9"; # CLK0
+NET "Clk" TNM_NET = "Clk";
+TIMESPEC "TS_Clk" = PERIOD "Clk" 10 ns HIGH 50 %;
+# LED
+NET "led_cathode" LOC = "C15"| IOSTANDARD = LVCMOS33 ; #IO_L24N_1
+NET "led_anode"   LOC = "C16"| IOSTANDARD = LVCMOS33 ; #IO_L24P_1
