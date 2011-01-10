@@ -14,7 +14,7 @@
 #   family      FPGA device family (spartan3e) 
 #   part        FPGA part name (xc4vfx12-10-sf363)
 #   flashsize   size of flash for mcs file (16384)
-#   optfile     (optional) xst extra opttions file to put in .scr
+#   optfile     (optional) xst extra options file to put in .scr
 #   map_opts    (optional) options to give to map
 #   par_opts    (optional) options to give to par
 #   intstyle    (optional) intstyle option to all tools
@@ -41,7 +41,7 @@ xil_env ?= . $(isedir)/settings64.sh
 flashsize ?= 8192
 
 libmks = $(patsubst %,$(libdir)/%/module.mk,$(libs)) 
-mkfiles = Makefile $(libmks)
+mkfiles = $(libmks)
 include $(libmks)
 
 corengcs = $(foreach core,$(xilinx_cores),$(core:.xco=.ngc))
@@ -62,12 +62,7 @@ endef
 $(foreach ngc,$(corengcs),$(eval $(call cp_template,$(ngc),$(notdir $(ngc)))))
 
 %.ngc %.v: %.xco
-	@echo "=== rebuilding $@"
-	if [ -d $(coregen_work_dir) ]; then \
-		rm -rf $(coregen_work_dir)/*; \
-	else \
-		mkdir -p $(coregen_work_dir); \
-	fi
+	mkdir -p $(coregen_work_dir); \
 	cd $(coregen_work_dir); \
 	$(xil_env); \
 	coregen -b $$OLDPWD/$<; \
