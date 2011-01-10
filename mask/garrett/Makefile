@@ -1,21 +1,14 @@
-# test1 makefile
-#
-CC = gcc
-CFLAGS = -Wall -g
-.SUFFIXES : .o .c
 
-CFILES = sxc_shift_small.c
-
-all: sxc_shift_v4
+all: events.pdf sxc.out sxc.pdf
 
 clean:
-	rm -f sxc_shift_v4 *.o *~
+	rm -f *~ *.pdf *.out *.pyc
 
-sxc_shift_v4: sxc_shift_v4.o
-	$(CC) $(CFLAGS) sxc_shift_v4.o -o sxc_shift_v4 -lm
+sxc.out : sxc.py mask.tsv events.tsv
+	./sxc.py mask.tsv events.tsv > $@
 
-sxc_shift_v4.o : sxc_shift_v4.c
+sxc.pdf : sxc.out ../python/bar.py
+	../python/bar.py $< $@
 
-.c.o :
-	rm -f $@
-	$(CC) $(CFLAGS) $< -g -c
+events.pdf : events.tsv ../python/histogram.py
+	../python/histogram.py $< $@
