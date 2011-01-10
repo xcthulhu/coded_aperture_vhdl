@@ -1,0 +1,6 @@
+root
+# download the bitmap
+tftp -g -r BITMAP IP &
+sleep 5
+# load the bitmap into the fpga
+load_fpga BITMAP
