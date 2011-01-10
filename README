@@ -1,5 +1,9 @@
 This software is distributed under the GNU Public License v3
 
+xilinx.mk: A minimal makefile for the xilinx WebPack synthesis toolchain.  Adapted from http://www.excamera.com/sphinx/fpga-makefile.html
+
+kermit_install: A template for installing xilinx bitmaps into the memory of the armedeus FPGA, using kermit to control the armedeus
+
 blink/: A simple hello world VHDL program, adapted from: http://www.armadeus.com/wiki/index.php?title=Simple_blinking_LED
 
 c_vhdl/: Implementations of stdio.h, stdlib.h, and other standard C libraries in VHDL.  This is invaluable for writing debugging code.  Works well with GHDL.  Originally based on research found here: 
@@ -7,3 +11,7 @@ http://bear.ces.case.edu/VHDL/index.html
 http://fpgalibre.sourceforge.net/ingles.html#CVHDL
 
 mask/: An implementation of the logic behind a 1D coded aperture.  Uses c_vhdl for bench-testing.
+
+mask/garrett/: A subdirectory with python code for simulating the HETE SXC
+
+mask/python/: Contains a number of useful python programs for making graphs
