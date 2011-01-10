@@ -3,6 +3,7 @@ blink_tb
 mask_tb
 
 # Data Products
+*.out
 *.vcd
 *.o
 *.cf
