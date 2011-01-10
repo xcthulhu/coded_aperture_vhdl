@@ -7,28 +7,32 @@ entity blink_tb is end blink_tb;
 
 architecture behav of blink_tb is
   component Clk_div_led is
-    generic (max_count   :    natural := 33000000);
-    port (CLK_33MHZ_FPGA : in std_logic; GPIO_LED_0 : out std_logic);
+    generic (max_count : natural := 48000000);
+    port (CLK         : in  std_logic;
+          led_cathode : out std_logic;
+          led_anode   : out std_logic);
   end component;
   --  Specifies which entity is bound with the component.
-  for uut               : Clk_div_led use entity work.Clk_div_led;
-  signal GPIO_LED_0     : std_logic;
-  signal CLK_33MHZ_FPGA : std_logic;
+  for dut            : Clk_div_led use entity work.Clk_div_led;
+  signal CLK         : std_logic;
+  signal led_cathode : std_logic;
+  signal led_anode   : std_logic;
 begin
   --  Component instantiation.
-  uut : Clk_div_led generic map (max_count => 100)
-    port map (CLK_33MHZ_FPGA => CLK_33MHZ_FPGA,
-              GPIO_LED_0     => GPIO_LED_0) ;
+  --  We can only simulate a second at most, so max_count must be small
+  dut : Clk_div_led generic map (max_count => 100)
+    port map (CLK         => CLK,
+              led_cathode => led_cathode,
+              led_anode   => led_anode) ;
   process
     -- These control the looping we will do
     constant the_end : integer := 10000;
     variable count   : integer;
   begin
-    CLK_33MHZ_FPGA <= '1';
+    CLK <= '1';
     for count in 0 to the_end loop
       wait for 15 ns;
-      CLK_33MHZ_FPGA <= not CLK_33MHZ_FPGA;
-      wait for 15 ns;
+      CLK <= not CLK;
     end loop;
     wait;
   end process;
