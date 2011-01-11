@@ -1,0 +1,8 @@
+# cat /etc/network/interfaces 
+# Configure Loopback
+auto lo
+iface lo inet loopback
+
+# Use DHCP
+auto eth0
+iface eth0 inet dhcp

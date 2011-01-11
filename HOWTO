@@ -85,11 +85,124 @@ Ubuntu Armedeus HOWTO:
     I prefer kermit over gtkterm, because a real terminal program lets me 
     scroll back in history while gtkterm does not.
 
-• Settup TFTP for sending files to the Armadeus
+  ○ Setting up kermit & screen
+
+    I personally find the fact that kermit only allows one terminal to 
+    connect to the armadeus to be annoying when moving back and forth between
+    workstations.  So I suggest using "screen" to solve this problem.
+
+    Screen allows for session management of shell commands.  Under screen,
+    a shell command can be disconnected and then connect to again later.
+
+    To use screen to allow multiple shells to connect to a kermit session, 
+    you need to set a configuration:
+
+	> echo multiuser on >> ~/.screenrc
+
+    Now if when you want to start kermit type:
+
+	> screen -S KERMIT kermit -y configs/kermrc -c
+
+    You can disconnect from the screen session by typing 
+
+	"ctrl-a" followed by "d"
+
+    Now that screen is set up, if you want to connect to kermit using
+    another shell terminal type:
+
+	> screen -x KERMIT
+
+    Be aware that all of the screen sessions will be mirror images of 
+    one another.  Also, using kermit like this will break "make install" 
+    commands.
+
+• Set Up Networking & TFTP for sending files to the Armadeus
 
   First thing is that you need to download the tftp server in Ubuntu:
 
-  > sudo apt-get install tftpd xinetd
+	> sudo apt-get install tftpd xinetd
+
+  Next, you need to set up the tftp server directory.  This is essentially 
+  a drop-box.  The following sequence of commands makes one of these 
+  directories, along with an appropriate set of permissions:
+
+	> sudo mkdir -p /srv/tftp
+	> sudo chmod 777 /srv/tftp
+	> sudo chown nobody.src /srv/tftp
+
+  You'll also need to set up tftp's configuration file.  A suitable settup 
+  is available in the configs/ directory, which you can copy to your system:
+
+	> sudo cp configs/tftp /etc/xinetd.d/
+
+  Next, you'll need to restart xinetd.d, which controls tftpd
+
+	> sudo /etc/init.d/xinetd restart
+
+  To verify that tftpd is working, type:
+
+	> netstat -a | grep tftp
+
+  Which will return:
+
+	udp        0      0 *:tftp                  *:*
+
+  For testing purposes, we will want to put a test file in /srv/tftp:
+
+	> echo "Hello world tftp" >> /srv/tftp/hello
+
+  Now to retrieve this file is a matter of getting the correct
+
+  ▶ Networking
+
+    In practice, there are two ways to network the armadeus: DHCP and 
+    assigned IP.
+
+    ◈ DHCP
+
+      Use gtkterm or kermit to connect to the armadeus, and log in as root.
+      The type at the prompt on the armadeus:
+
+	# udhcpc
+
+      This will start a dhcp client on eth0; you can verify that it has been
+      assigned by typing:
+
+	# ifconfig eth0
+
+      You can use the same command in linux to figure out Ubuntu's IP 
+      address.  Once you know ubuntu's IP address, you can use tftp to copy
+      "hello" as follows:
+
+	# tftp -g -r hello <UBUNTU_IP>
+
+      *** The file we put in /srv/tftp should now be in the current ***
+      *** working directory on the armadeus.  Type "cat hello" to   ***
+      *** verify this.                                              ***
+
+      Finally, if you want the armadeus to always boot up and connect to
+      the web with DHCP, then copy the contents of "configs/interfaces" to
+      "/etc/network/interfaces" on the Armadeus
+
+    ◈ Assigned IP
+
+      A DHCP network connection is not always available or desirable; 
+      for instance you may just want ubuntu to talk to the armadeus with an
+      ethernet crossover cable, or through an ethernet hub without a router.
+
+      You can assign the armadeus ethernet card to the ip address 
+      "192.168.0.3" using the following:
+
+	# ifconfig eth0 192.168.0.3 up
+
+      On my Ubuntu computer, my physical ethernet card is device "eth1".  To
+      assign it an ip address, I use the same command as the armadeus:
+
+	> sudo ifconfig eth0 192.168.0.2 up
+
+      To copy "hello" now from Ubuntu's /srv/tftp/, type at the armadeus:
+
+	#  # tftp -g -r hello 192.168.0.2
 
 • Install the Armadeus Development Suite
 
@@ -115,12 +228,7 @@ Ubuntu Armedeus HOWTO:
   for the WebPack software.
 
   As of January 10, 2011 The WebPack is 3.5 GB, so I recommend when 
-  downloading that you find something fun to do for ~16 hours.  For
-  instance, you could watch an entire season of 24, play Final
-  Fantasy 7 from beginning to end, or read the entire Hitch Hiker's Guide 
-  to The Galaxy series.  Perhaps you could write up an elaborate HOWTO
-  explaining the steps you went through to do FPGA development on linux?  
-  They're all nice choices; they point is you have time to burn.
+  downloading that you find something else to do for ~16 hours.
 
   <FIXME: FINISH TUTORIAL>
 
