@@ -35,7 +35,7 @@ include ../xilinx.mk
 IP=$(shell ifconfig eth0 | grep 'inet addr' | sed 's/.*inet addr:\([0-9\.]\+\).*/\1/g')
 install : $(BITMAP)
 	cp $(BITMAP) /srv/tftp
-	sed -e 's/BITMAP/$(BITMAP)/g' -e 's/IP/$(IP)/' ../kermit_install | kermit -y ../kermrc -c
+	sed -e 's/BITMAP/$(BITMAP)/g' -e 's/IP/$(IP)/' ../kermit_install | kermit -y ../configs/kermrc -c
 
 clean :
 	# Clean ISE products

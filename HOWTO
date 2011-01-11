@@ -53,7 +53,7 @@ Ubuntu Armedeus HOWTO:
     You can connect to the armadeus with kermit in the containing this howto
     by typing:
 
-	> kermit -y kermrc -c
+	> kermit -y configs/kermrc -c
 
     It will then output
 
@@ -76,10 +76,11 @@ Ubuntu Armedeus HOWTO:
 
     This displays other commands that kermit accepts.
 
-    The "-y kermrc" option tells kermit to use a custom initialization 
-    file.  If you want these settings to always be loaded, type at
+    The "-y configs/kermrc" option tells kermit to use a custom 
+    initialization file.  If you want these settings to always be loaded, 
+    type at the ubuntu shell:
 
-	> cp kermrc ~/.kermrc
+	> cp configs/kermrc ~/.kermrc
 
     I prefer kermit over gtkterm, because a real terminal program lets me 
     scroll back in history while gtkterm does not.
