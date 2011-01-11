@@ -90,7 +90,9 @@ Ubuntu Armedeus HOWTO:
 
   > sudo apt-get install tftpd xinetd
 
-  
+• Install the Armadeus Development Suite
+
+• Flash the Latest Version of Linux onto the Armadeus
 
 • Install the XILINX WebPack for Bitmap Synthesis
 
