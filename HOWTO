@@ -85,7 +85,7 @@ Ubuntu Armedeus HOWTO:
     I prefer kermit over gtkterm, because a real terminal program lets me 
     scroll back in history while gtkterm does not.
 
-  ○ Setting up kermit & screen
+  ○ Set Up kermit & screen
 
     I personally find the fact that kermit only allows one terminal to 
     connect to the armadeus to be annoying when moving back and forth between
@@ -114,44 +114,46 @@ Ubuntu Armedeus HOWTO:
 
     Be aware that all of the screen sessions will be mirror images of 
     one another.  Also, using kermit like this will break "make install" 
-    commands.
+    commands that invoke kermit.
 
 • Set Up Networking & TFTP for sending files to the Armadeus
 
-  First thing is that you need to download the tftp server in Ubuntu:
+  ▶ TFTP
+    First thing is that you need to download the tftp server in Ubuntu:
 
 	> sudo apt-get install tftpd xinetd
 
-  Next, you need to set up the tftp server directory.  This is essentially 
-  a drop-box.  The following sequence of commands makes one of these 
-  directories, along with an appropriate set of permissions:
+    Next, you need to set up the tftp server directory.  This is essentially 
+    a drop-box.  The following sequence of commands makes one of these 
+    directories, along with an appropriate set of permissions:
 
 	> sudo mkdir -p /srv/tftp
 	> sudo chmod 777 /srv/tftp
 	> sudo chown nobody.src /srv/tftp
 
-  You'll also need to set up tftp's configuration file.  A suitable settup 
-  is available in the configs/ directory, which you can copy to your system:
+    You'll also need to set up tftp's configuration file.  A suitable settup 
+    is available in the configs/ directory, which you can copy to your
+    system:
 
 	> sudo cp configs/tftp /etc/xinetd.d/
 
-  Next, you'll need to restart xinetd.d, which controls tftpd
+    Next, you'll need to restart xinetd.d, which controls tftpd
 
 	> sudo /etc/init.d/xinetd restart
 
-  To verify that tftpd is working, type:
+    To verify that tftpd is working, type:
 
 	> netstat -a | grep tftp
 
-  Which will return:
+    Which will return:
 
 	udp        0      0 *:tftp                  *:*
 
-  For testing purposes, we will want to put a test file in /srv/tftp:
+    For testing purposes, we will want to put a test file in /srv/tftp:
 
 	> echo "Hello world tftp" >> /srv/tftp/hello
 
-  Now to retrieve this file is a matter of getting the correct
+    Now to retrieve this file is a matter of getting the correct
 
   ▶ Networking
 
@@ -204,13 +206,47 @@ Ubuntu Armedeus HOWTO:
 
 	#  # tftp -g -r hello 192.168.0.2
 
-• Install the Armadeus Development Suite
+• Install the Armadeus Toolchain
+  
+  The armadeus toolchain is a convenient collection of cross compilers, 
+  embedded linux kernels and examples distributed by the armadeus 
+  manufacturers.
+
+  You will first need to download a lot of development software:
+	> sudo apt-get install build-essential gcc g++ autoconf automake \
+                               libtool bison flex gettext patch subversion \
+                               texinfo wget git-core libncurses5 \
+                               libncurses5-dev zlib1g-dev liblzo2-2 \
+                               liblzo2-dev libacl1 libacl1-dev \
+                               uuid-dev libglib2.0-dev libnetpbm10-dev
+
+  You should get the latest stable release, v3.3:
+
+  http://downloads.sourceforge.net/project/armadeus/armadeus/armadeus-3.3/armadeus-3.3.tar.bz2
+
+  You can also get a snapshot of the latest version with git.  Details on 
+  how to do this can be found here:
+
+  http://www.armadeus.com/wiki/index.php?title=Toolchain#Get_Armadeus_software
+
+  I recommend the stable release.  Once it's downloaded, untar it and change 
+  into that directory:
+
+	> tar jxfv armadeus-3.3.tar.bz2
+	> cd armadeus-3.3
+  
+  You'll need to configure the toolchain for your board.  If you are like 
+  me, you have the apf27:
+
+	> make apf27_defconfig
+
+  
 
 • Flash the Latest Version of Linux onto the Armadeus
 
 • Install the XILINX WebPack for Bitmap Synthesis
 
-  I followed the instructions here:
+  To do this, I followed the instructions here:
 
   http://www.armadeus.com/wiki/index.php?title=ISE_WebPack_installation_on_Linux
 
@@ -235,5 +271,3 @@ Ubuntu Armedeus HOWTO:
 • Install GHDL + GTKWave for Bench Tests
 
 • Install SciPy for Plotting HETE SXC Simulations
-
-
