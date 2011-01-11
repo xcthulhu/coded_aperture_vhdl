@@ -1,0 +1,128 @@
+Ubuntu Armedeus HOWTO:
+
+• Talk to linux on the armadeus using a serial line:
+
+  First, plug in your USB<>Serial converter to your computer, and then
+  connect a null-modem serial cable from the serial converter to the
+  armadeus.  Make sure the armadeus is powered up
+
+  To talk to the armadeus, we use two vt100 serial terminal emulator 
+  programs.  Here's how you install them:
+
+	> sudo apt-get install gtkterm ckermit
+
+  You will need to have access to the serial device, which means you need to 
+  be in the "dialout" group.  Add yourself with this command:
+
+	> sudo usermod -a -G dialout $USER
+
+  ○ Setting up gtkterm
+
+    Fire up gtkterm:
+
+	> gtkterm
+
+    You will need to set up gtkterm to use the right port and baud rate.  Go 
+    to the "Configuration -> Port" menu item.  Select "/dev/ttyUSB0" as the 
+    port and select "115200" as the speed.
+
+    At the gtkterm prompt, hit the enter⏎ key.  You should see a login
+    prompt:
+
+	Welcome to the Armadeus development environment.
+	armadeus login: █
+
+    Type in
+
+	> root
+
+    And hit enter⏎.  It should return "# █".  You are now at the linux 
+    prompt on the armadeus, logged in as root.
+
+    You will want to save your configuration.  Go to 
+    "Configuration->Save configuration" and type in "armadeus".  You can now 
+    load this configuration when you restart GTKTerm by going to  
+    "Configuration->Load configuration" and selecting "armadeus"
+
+    You probably want to exit the login shell by typing
+
+	# exit
+
+  ○ Setting up kermit
+
+    You can connect to the armadeus with kermit in the containing this howto
+    by typing:
+
+	> kermit -y kermrc -c
+
+    It will then output
+
+	Connecting to /dev/ttyUSB0, speed 115200
+	 Escape character: Ctrl-\ (ASCII 28, FS): enabled
+	Type the escape character followed by C to get back,
+	or followed by ? to see other options.
+	----------------------------------------------------
+	█
+
+    Hit the enter⏎ key and you should either see the linux login prompt or
+    a shell prompt "# █".  If you are in login prompt, you can login to root
+    by typing "root".  If you want to quit kermit, type 
+
+	"ctrl-\" followed by "Q"
+
+    You can access the online documentation in kermit by typing
+ 
+	"ctrl-\" followed by "?"
+
+    This displays other commands that kermit accepts.
+
+    The "-y kermrc" option tells kermit to use a custom initialization 
+    file.  If you want these settings to always be loaded, type at
+
+	> cp kermrc ~/.kermrc
+
+    I prefer kermit over gtkterm, because a real terminal program lets me 
+    scroll back in history while gtkterm does not.
+
+• Settup TFTP for sending files to the Armadeus
+
+  First thing is that you need to download the tftp server in Ubuntu:
+
+  > sudo apt-get install tftpd xinetd
+
+  
+
+• Install the XILINX WebPack for Bitmap Synthesis
+
+  I followed the instructions here:
+
+  http://www.armadeus.com/wiki/index.php?title=ISE_WebPack_installation_on_Linux
+
+  The first step is to make sure that the following packages are installed 
+  in ubuntu:
+
+	> sudo apt-get install libstdc++5 libmotif3 libxp6 libcurl3
+
+  The next step is to download whatever the latest version of the Xilinx 
+  ISE.  Go here and download the linux version:
+
+  http://www.xilinx.com/ise/logic_design_prod/webpack.htm
+
+  I recommend making a new account; this will ensure that you have a license
+  for the WebPack software.
+
+  As of January 10, 2011 The WebPack is 3.5 GB, so I recommend when 
+  downloading that you find something fun to do for ~16 hours.  For
+  instance, you could watch an entire season of 24, play Final
+  Fantasy 7 from beginning to end, or read the entire Hitch Hiker's Guide 
+  to The Galaxy series.  Perhaps you could write up an elaborate HOWTO
+  explaining the steps you went through to do FPGA development on linux?  
+  They're all nice choices; they point is you have time to burn.
+
+  <FIXME: FINISH TUTORIAL>
+
+• Install GHDL + GTKWave for Bench Tests
+
+• Install SciPy for Plotting HETE SXC Simulations
+
+
