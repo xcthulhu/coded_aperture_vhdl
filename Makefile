@@ -10,7 +10,13 @@ all:
 	$(MAKE) -C c_vhdl all
 	$(MAKE) -C mask all
 
+armadeus:
+	git submodule init
+	git submodule update
+	$(MAKE) -C armadeus
+
 clean:
 	$(MAKE) -C blink clean
 	$(MAKE) -C mask clean
 	$(MAKE) -C c_vhdl clean
+	$(MAKE) -C armadeus clean
