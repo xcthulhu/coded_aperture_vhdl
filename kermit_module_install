@@ -1,0 +1,6 @@
+root
+# download the bitmap
+tftp -g -r MODULE IP &
+sleep 5
+# load the module into the kernel
+insmod MODULE
