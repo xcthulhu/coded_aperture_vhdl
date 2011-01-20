@@ -1,0 +1,3 @@
+[submodule "armadeus"]
+	path = armadeus
+	url = git://armadeus.git.sourceforge.net/gitroot/armadeus/armadeus
