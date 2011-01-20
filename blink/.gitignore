@@ -1,3 +1,8 @@
+# Programs
+blink_tb
+
+# Xilinx Crap
+*.cfi
 *.bgn
 *.bit
 *.xwbt
