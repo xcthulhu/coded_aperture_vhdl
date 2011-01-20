@@ -36,8 +36,8 @@
 coregen_work_dir ?= ./coregen-tmp
 map_opts ?= -timing -ol high -detail -pr b -register_duplication -w
 par_opts ?= -ol high
-isedir ?= $$XILINX
-xil_env ?= . $(isedir)/settings64.sh
+isedir ?= /opt/Xilinx/12.3/ISE_DS
+xil_env ?= . $(isedir)/settings32.sh ; . $(isedir)/common/settings32.sh
 flashsize ?= 8192
 
 libmks = $(patsubst %,$(libdir)/%/module.mk,$(libs)) 
@@ -64,7 +64,7 @@ $(foreach ngc,$(corengcs),$(eval $(call cp_template,$(ngc),$(notdir $(ngc)))))
 %.ngc %.v: %.xco
 	mkdir -p $(coregen_work_dir); \
 	cd $(coregen_work_dir); \
-	$(xil_env); \
+	$(xil_env) ; \
 	coregen -b $$OLDPWD/$<; \
 	cd -
 	xcodir=`dirname $<`; \
@@ -86,21 +86,21 @@ programming_files: $(project).bit $(project).mcs
 	mkdir -p $@/$(date)
 	mkdir -p $@/latest
 	for x in .bit .mcs .cfi _bd.bmm; do cp $(project)$$x $@/$(date)/$(project)$$x; cp $(project)$$x $@/latest/$(project)$$x; done
-	$(xil_env); xst -help | head -1 | sed 's/^/#/' | cat - $(project).scr > $@/$(date)/$(project).scr
+	$(xil_env) ; xst -help | head -1 | sed 's/^/#/' | cat - $(project).scr > $@/$(date)/$(project).scr
 
 $(project).mcs: $(project).bit
-	$(xil_env); \
+	$(xil_env) ; \
 	promgen -w -s $(flashsize) -p mcs -o $@ -u 0 $^
 junk += $(project).mcs $(project).cfi $(project).prm
 
 $(project).bit: $(project)_par.ncd
-	$(xil_env); \
+	$(xil_env) ; \
 	bitgen $(intstyle) -g DriveDone:yes -g StartupClk:Cclk -w $(project)_par.ncd $(project).bit
 junk += $(project).bgn $(project).bit $(project).drc $(project)_bd.bmm
 
 
 $(project)_par.ncd: $(project).ncd
-	$(xil_env); \
+	$(xil_env) ; \
 	if par $(intstyle) $(par_opts) -w $(project).ncd $(project)_par.ncd; then \
 		:; \
 	else \
@@ -118,18 +118,18 @@ $(project).ncd: $(project).ngd
 	else \
 		smartguide=""; \
 	fi; \
-	$(xil_env); \
+	$(xil_env) ; \
 	map $(intstyle) $(map_opts) $$smartguide $<
 junk += $(project).ncd $(project).pcf $(project).ngm $(project).mrp $(project).map
 junk += smartguide.ncd $(project).psr 
 junk += $(project)_summary.xml $(project)_usage.xml
 
 $(project).ngd: $(project).ngc $(project).ucf 
-	$(xil_env); ngdbuild $(intstyle) $(project).ngc
+	$(xil_env) ; ngdbuild $(intstyle) $(project).ngc
 junk += $(project).ngd $(project).bld
 
 $(project).ngc: $(files) $(local_corengcs) $(project).scr $(project).prj
-	$(xil_env); xst $(intstyle) -ifn $(project).scr
+	$(xil_env) ; xst $(intstyle) -ifn $(project).scr
 junk += xlnx_auto* $(top_module).lso $(project).srp 
 junk += netlist.lst xst $(project).ngc
 
@@ -151,15 +151,15 @@ $(project).scr: $(optfile) $(mkfiles) ./xilinx.opt
 junk += $(project).scr
 
 $(project).post_map.twr: $(project).ncd
-	$(xil_env); trce -e 10 $< $(project).pcf -o $@
+	$(xil_env) ; trce -e 10 $< $(project).pcf -o $@
 junk += $(project).post_map.twr $(project).post_map.twx smartpreview.twr
 
 $(project).twr: $(project)_par.ncd
-	$(xil_env); trce $< $(project).pcf -o $(project).twr
+	$(xil_env) ; trce $< $(project).pcf -o $(project).twr
 junk += $(project).twr $(project).twx smartpreview.twr
 
 $(project)_err.twr: $(project)_par.ncd
-	$(xil_env); trce -e 10 $< $(project).pcf -o $(project)_err.twr
+	$(xil_env) ; trce -e 10 $< $(project).pcf -o $(project)_err.twr
 junk += $(project)_err.twr $(project)_err.twx
 
 .gitignore: $(mkfiles)
