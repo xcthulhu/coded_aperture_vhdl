@@ -1,14 +1,16 @@
-MODULE=hello-1.ko
+MODULE=hello.ko
+KDIR=../armadeus/buildroot/project_build_armv5te/apf27/linux-2.6.29.6/
 
-obj-m += hello-1.o
+obj-m += hello.o
 
 all : $(MODULE)
 
 $(MODULE):
-	make -C ../armadeus/buildroot/project_build_armv5te/apf27/linux-2.6.29.6/ M=$(PWD) modules
+	make -C $(KDIR) M=$(PWD) modules
 
 clean:
-	make -C ../armadeus/buildroot/project_build_armv5te/apf27/linux-2.6.29.6/ M=$(PWD) clean
+	make -C $(KDIR) M=$(PWD) clean
+	rm -f Module.markers modules.order
 
 # Install the bitmap on the armadeus, by loading into the FPGA
 IP=192.168.0.3

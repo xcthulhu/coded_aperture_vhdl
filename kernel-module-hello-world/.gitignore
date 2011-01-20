@@ -1,0 +1,4 @@
+*.ko
+*.o
+Module.marker
+modules.order
