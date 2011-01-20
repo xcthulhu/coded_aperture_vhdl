@@ -6,3 +6,4 @@
 *.o
 Module.marker
 modules.order
+Module.symvers
