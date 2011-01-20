@@ -1,0 +1,3 @@
+This is VHDL code for the armadeus wishbone example
+
+testbench/ contains a bench test for testing the code here.  It needs to be fixed to it actually produces something
