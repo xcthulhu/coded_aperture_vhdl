@@ -6,6 +6,7 @@ COMP=ghdl
 VHDL_C=$(COMP) -a 
 VHDL_E=$(COMP) -e
 VHDL_R=$(COMP) -r
+DEVEL_BASE=..
 RM=rm -f
 RMDIR=rm -rf
 
@@ -29,15 +30,11 @@ vendor=xilinx
 family=spartan3s
 part=xc3s200a-4ft256
 files=blink.vhdl
-include ../xilinx.mk
+include $(DEVEL_BASE)/xilinx.mk
 
 # Install the bitmap on the armadeus, by loading into the FPGA
-IP=192.168.0.3
-ETHERNET_DEVICE=eth2
-install : $(BITMAP)
-	cp $(BITMAP) /srv/tftp
-	ifconfig $(ETHERNET_DEVICE) $(IP) up
-	sed -e 's/BITMAP/$(BITMAP)/g' -e 's/IP/$(IP)/' ../kermit_fpga_install | kermit -q -y ../configs/kermrc -c
+include $(DEVEL_BASE)/install.mk
+install : install_bitmap
 
 clean :
 	# Clean ISE products

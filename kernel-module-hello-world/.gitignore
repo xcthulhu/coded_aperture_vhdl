@@ -1,3 +1,7 @@
+*.cmd
+.tmp_versions
+*.cmd
+*.mod.c
 *.ko
 *.o
 Module.marker
