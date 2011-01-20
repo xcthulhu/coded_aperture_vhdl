@@ -12,13 +12,8 @@ BITMAP=$(project).bit
 all: $(BITMAP)
 
 # Install the bitmap on the armadeus, by loading into the FPGA
-IP=192.168.0.3
-ETHERNET_DEVICE=eth2
-install : $(BITMAP)
-	cp $(BITMAP) /srv/tftp
-	ifconfig $(ETHERNET_DEVICE) $(IP) up
-	sed -e 's/BITMAP/$(BITMAP)/g' -e 's/IP/$(IP)/' ../../kermit_fpga_install | kermit -q -y ../../configs/kermrc -c
-
+include ../../install.mk
+install : install_bitmap
 
 # Clean up (in case you were foolish enough to call the fucking ISE)
 RMDIR=rm -rf
