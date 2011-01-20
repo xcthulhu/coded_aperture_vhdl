@@ -37,7 +37,7 @@ coregen_work_dir ?= ./coregen-tmp
 map_opts ?= -timing -ol high -detail -pr b -register_duplication -w
 par_opts ?= -ol high
 isedir ?= /opt/Xilinx/12.3/ISE_DS
-xil_env ?= . $(isedir)/settings32.sh ; . $(isedir)/common/settings32.sh
+xil_env ?= . $(isedir)/settings32.sh 
 flashsize ?= 8192
 
 libmks = $(patsubst %,$(libdir)/%/module.mk,$(libs)) 
