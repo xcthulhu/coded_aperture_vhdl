@@ -32,10 +32,12 @@ files=blink.vhdl
 include ../xilinx.mk
 
 # Install the bitmap on the armadeus, by loading into the FPGA
-IP=$(shell ifconfig eth0 | grep 'inet addr' | sed 's/.*inet addr:\([0-9\.]\+\).*/\1/g')
+IP=192.168.0.3
+ETHERNET_DEVICE=eth2
 install : $(BITMAP)
 	cp $(BITMAP) /srv/tftp
-	sed -e 's/BITMAP/$(BITMAP)/g' -e 's/IP/$(IP)/' ../kermit_install | kermit -y ../configs/kermrc -c
+	ifconfig $(ETHERNET_DEVICE) $(IP) up
+	sed -e 's/BITMAP/$(BITMAP)/g' -e 's/IP/$(IP)/' ../kermit_fpga_install | kermit -y ../configs/kermrc -c
 
 clean :
 	# Clean ISE products
