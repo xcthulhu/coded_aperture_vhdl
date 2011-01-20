@@ -16,4 +16,4 @@ ETHERNET_DEVICE=eth2
 install : $(MODULE)
 	cp $(MODULE) /srv/tftp
 	ifconfig $(ETHERNET_DEVICE) $(IP) up
-	sed -e 's/MODULE/$(MODULE)/g' -e 's/IP/$(IP)/' ../kermit_module_install | kermit -y ../configs/kermrc -c
+	sed -e 's/MODULE/$(MODULE)/g' -e 's/IP/$(IP)/' ../kermit_module_install | kermit -q -y ../configs/kermrc -c

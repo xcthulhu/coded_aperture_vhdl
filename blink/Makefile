@@ -37,7 +37,7 @@ ETHERNET_DEVICE=eth2
 install : $(BITMAP)
 	cp $(BITMAP) /srv/tftp
 	ifconfig $(ETHERNET_DEVICE) $(IP) up
-	sed -e 's/BITMAP/$(BITMAP)/g' -e 's/IP/$(IP)/' ../kermit_fpga_install | kermit -y ../configs/kermrc -c
+	sed -e 's/BITMAP/$(BITMAP)/g' -e 's/IP/$(IP)/' ../kermit_fpga_install | kermit -q -y ../configs/kermrc -c
 
 clean :
 	# Clean ISE products
