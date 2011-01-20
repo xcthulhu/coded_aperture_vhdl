@@ -1,3 +1,5 @@
+.PHONY=install_bitmap install_modules
+
 IP=192.168.0.3
 ETHERNET_DEVICE=eth2
 
