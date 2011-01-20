@@ -3,6 +3,8 @@ blink_tb
 mask_tb
 
 # Data Products
+*.pdf
+*.bit
 *.out
 *.vcd
 *.o
