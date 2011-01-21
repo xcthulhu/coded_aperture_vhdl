@@ -12,6 +12,8 @@ configs/: Contains useful configuration files for kermit and tftp
 
 HOWTO: A howto guide to setting up ubuntu to do FPGA development on the armadeus, using the software in this git repository
 
+install.mk: Common installation instructions for makefiles
+
 kermit_fpga_install: A template for installing xilinx bitmaps into the memory of the armedeus FPGA, using kermit to control the armedeus
 
 kermit_module_install: A template for installing linux modules on the armedeus, using kermit
