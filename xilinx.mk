@@ -169,4 +169,8 @@ $(project).clean:
 	# Clean command line webpack synthesis products
 	rm -rf $(junk)
 
-clean: $(project).clean
+ise.clean:
+	# Clean ISE garbage
+	rm -rf *.stx *.ucf.untf *.mrp *.nc1 *.ngm *.prm *.lfp *.placed_ncd_tracker *.routed_ncd_tracker *.pad_txt *.twx *.log *.vhd~ *.dhp *.jhd *.cel *.ngr *.ngc *.ngd *.syr *.bld *.pcf *_map.mrp *_map.ncd *_map.ngm *.ncd *.pad *.par *.xpi *_pad.csv *_pad.txt *.drc *.bgn *.xml *_build.xml *.rpt *.gyd *.mfd *.pnx *.gise *.vm6 *.jed *.err *.ER result.txt tmperr.err *.bak *.zip *_backup *.*log *.map *.unroutes *.html *.prj *.xrpt *.xwbt *.lso *.ptwx *.twr *.ut *.xst *.bit impactcmd.txt iseconfig xlnx_auto_0_xdb xst _ngo *_html _xmsgs __projnav
+
+clean: $(project).clean ise.clean
