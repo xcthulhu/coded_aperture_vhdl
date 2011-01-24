@@ -3,7 +3,6 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-use std.textio.all;
 
 -- the types event_type and image_array
 -- and the constant image_size
