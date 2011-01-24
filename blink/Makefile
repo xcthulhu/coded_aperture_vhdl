@@ -37,20 +37,6 @@ include $(DEVEL_BASE)/install.mk
 install : install_bitmap
 
 clean :
-	# Clean ISE products
-	$(RM) *.stx *.ucf.untf *.mrp *.nc1 *.ngm *.prm *.lfp
-	$(RM) *.placed_ncd_tracker *.routed_ncd_tracker
-	$(RM) *.pad_txt *.twx *.log *.vhd~ *.dhp *.jhd *.cel
-	$(RM) *.ngr *.ngc *.ngd *.syr *.bld *.pcf
-	$(RM) *_map.mrp *_map.ncd *_map.ngm *.ncd *.pad
-	$(RM) *.par *.xpi *_pad.csv *_pad.txt *.drc *.bgn
-	$(RM) *.xml *_build.xml *.rpt *.gyd *.mfd *.pnx *.gise
-	$(RM) *.vm6 *.jed *.err *.ER result.txt tmperr.err *.bak *.vhd~
-	$(RM) *.zip *_backup *.*log *.map *.unroutes *.html
-	$(RM) *.prj *.xrpt *.xwbt *.lso *.ptwx *.twr *.ut *.xst
-	$(RM) *.bit
-	$(RM) impactcmd.txt
-	$(RMDIR) iseconfig xlnx_auto_0_xdb xst _ngo *_html _xmsgs __projnav
 	# Clean GHDL products
 	$(RM) *.o *.cf $(PROGS) *.vcd
 	$(RM) -r work
