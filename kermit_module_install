@@ -1,4 +1,3 @@
-root
 # download the bitmap
 tftp -g -r MODULE IP &
 sleep 5

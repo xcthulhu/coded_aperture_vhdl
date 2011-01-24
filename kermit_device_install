@@ -1,0 +1,2 @@
+# Make a character device
+mknod DEVICE c MAJOR MINOR
