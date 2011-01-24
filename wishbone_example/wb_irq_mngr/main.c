@@ -56,6 +56,7 @@ struct fpga_irq_mng_platform_data { /* To remove when MX1 platform merged */
 
 
 #define IRQ_MNGR_BASE (0x0)
+#define ID (1)
 #define ID_OFFSET (0x02 *(16/8))
 
 #define NB_IT    (16)
