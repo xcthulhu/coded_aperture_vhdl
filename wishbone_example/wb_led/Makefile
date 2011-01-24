@@ -20,7 +20,11 @@ testled:
 	$(ARMADEUS_TOOLCHAIN_PATH)/arm-linux-gcc -Wall testled.c -o testled
 
 -include $(DEVEL_BASE)/install.mk
-install : install_modules
+# Major and minor code specification for the /dev DEVICE
+DEVICE=/dev/led0
+MAJOR=250
+MINOR=0
+install : install_modules install_device
 
 clean:
 	$(MAKE) -C $(KDIR) SUBDIRS=$(PWD) clean 
