@@ -11,8 +11,7 @@ entity sclk_data_acq is
     -- Data Input
   ; a_in : in  std_logic
   ; b_in : in  std_logic
-  ; a    : out std_logic_vector(7 downto 0)
-  ; b    : out std_logic_vector(7 downto 0)
+  ; a,b  : out std_logic_vector(7 downto 0)
     );
 end sclk_data_acq;
 

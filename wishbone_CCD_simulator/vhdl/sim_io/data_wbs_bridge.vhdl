@@ -5,27 +5,24 @@ use IEEE.numeric_std.all;
 entity data_wbs_bridge is
   port (
     -- Global clock
-      clk        : in  std_logic
+    clk                    : in  std_logic
     -- Strobe clock from physical pin on board
-    ; STROBE       : in  std_logic
+  ; STROBE                 : in  std_logic
     -- Data Input
-    ; a            : in  std_logic_vector(7 downto 0)
-    ; b            : in  std_logic_vector(7 downto 0)
+  ; a, b                   : in  std_logic_vector(7 downto 0)
     -- IRQ Flag
-    ; irq          : out std_logic
+  ; irq                    : out std_logic
     -- Wishbone Signals
-    ; wbs_add      : in  std_logic
-    ; wbs_readdata : out std_logic_vector(15 downto 0)
-    ; wbs_strobe   : in  std_logic
-    ; wbs_cycle    : in  std_logic
-    ; wbs_write    : in  std_logic
-    ; wbs_ack      : out std_logic
+  ; wbs_strobe, wbs_cycle, 
+    wbs_write              : in  std_logic
+  ; wbs_readdata           : out std_logic_vector(15 downto 0)
+  ; wbs_ack                : out std_logic
     );
 end data_wbs_bridge;
 
 architecture data_wbs_bridge_1 of data_wbs_bridge is
   -- Previous state of the STROBE pin according to the clk
-  signal previous_STROBE : std_logic;
+  signal previous_STROBE : std_logic := STROBE;
 begin
   strobe_emit : process(clk)
   begin
