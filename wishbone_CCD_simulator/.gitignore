@@ -1,3 +1,4 @@
+*.markers
 *.symvers
 *.order
 *.mod.c
