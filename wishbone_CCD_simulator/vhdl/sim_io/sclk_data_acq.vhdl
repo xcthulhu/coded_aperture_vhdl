@@ -5,21 +5,21 @@ use ieee.numeric_std.all;
 entity sclk_data_acq is
   port (
     -- Global clock
-    clk  : in  std_logic
+    clk : in  std_logic ;
     -- A clock pin from LVDS
-  ; SCLK : in  std_logic
+   SCLK : in  std_logic ;
     -- Data Input
-  ; a_in : in  std_logic
-  ; b_in : in  std_logic
-  ; a,b  : out std_logic_vector(7 downto 0)
+   a_in, b_in : in  std_logic ;
+   -- Data Output
+   a,b  : out std_logic_vector(7 downto 0)
     );
 end sclk_data_acq;
 
 architecture sclk_data_acq_1 of sclk_data_acq is
   -- Previous state of the SCLK pin according to the clk
   signal previous_SCLK : std_logic;
-  signal a_val         : std_logic_vector(7 downto 0);
-  signal b_val         : std_logic_vector(7 downto 0);
+  -- Output values
+  signal a_val , b_val : std_logic_vector(7 downto 0);
 begin
   sclk_emit : process(clk)
   begin
@@ -32,7 +32,7 @@ begin
         previous_SCLK <= SCLK;
       end if;
     end if;
-  end process sclk_emit;
+  end process;
   a <= a_val;
   b <= b_val;
-end sclk_data_acq_1;
+end;

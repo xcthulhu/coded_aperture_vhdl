@@ -1,39 +1,37 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.numeric_std.all;
+use work.common_decs.all;
 
 --  A testbench has no ports.
-entity data_wbs_bridge_tb is end data_wbs_bridge_tb;
+entity data_bridge_tb is end data_bridge_tb;
 
-architecture behav of data_wbs_bridge_tb is
-  component data_wbs_bridge is
+architecture behav of data_bridge_tb is
+  component data_bridge is
     port (
-      clk, STROBE, wbs_strobe, wbs_cycle,
-      wbs_write : in std_logic
-    ; irq, wbs_ack : out std_logic
-    ; a, b : in  std_logic_vector(7 downto 0)
-    ; wbs_readdata : out std_logic_vector(15 downto 0) );
+      clk, STROBE : in std_logic ;
+      irqport : out std_logic ;
+      a, b : in  std_logic_vector(7 downto 0);
+      wbr : out wbr;
+      wbw : in wbw);
   end component;
   --  Specifies which entity is bound to the component
-  for dut : data_wbs_bridge use entity work.data_wbs_bridge;
-  signal clk, STROBE, irq, wbs_strobe,
-         wbs_cycle, wbs_write,
-         wbs_ack : std_logic;
+  for dut : data_bridge use entity work.data_bridge;
+  signal clk, STROBE, irqport : std_logic;
+  signal wbw : wbw;
   signal a, b : std_logic_vector(7 downto 0);
-  signal wbs_readdata : std_logic_vector(15 downto 0);
+  signal wbr : wbr;
 
 begin
-  dut : data_wbs_bridge
+  dut : data_bridge
     port map ( clk => clk
              , STROBE => STROBE
-             , irq => irq
-             , wbs_readdata => wbs_readdata
-             , wbs_strobe => wbs_strobe
-             , wbs_cycle => wbs_cycle
-             , wbs_write => wbs_write
-             , wbs_ack => wbs_ack
+             , irqport => irqport
+             , wbr => wbr
+             , wbw => wbw
              , a => a
-             , b => b );
+             , b => b
+             );
   process
     -- These control the looping we will do
     constant the_end : integer := 10000;
@@ -41,9 +39,9 @@ begin
   begin
     clk <= '0';
     STROBE <= '0';
-    wbs_strobe <= '0';
-    wbs_cycle <= '0';
-    wbs_write <= '0';
+    wbw.strobe <= '0';
+    wbw.cycle <= '0';
+    wbw.writing <= '0';
     a <= (others => '0');
     b <= (others => '0');
     for count in 0 to the_end loop
@@ -55,4 +53,4 @@ begin
     end loop;
     wait;
   end process;
-end behav;
+end;

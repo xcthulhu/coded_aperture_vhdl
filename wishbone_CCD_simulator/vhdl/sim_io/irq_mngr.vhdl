@@ -20,6 +20,8 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
+use work.common_decs.all;
+
 entity irq_mngr is
   generic
     (
@@ -29,23 +31,18 @@ entity irq_mngr is
   port
     (
       -- Global Signals
-      gls_clk   : in std_logic;
-      gls_reset : in std_logic;
+      clk   : in std_logic;
+      reset : in std_logic;
 
       -- Wishbone interface signals
-      wbs_s1_address   : in  std_logic_vector(12 downto 0);   -- Address bus
-      wbs_s1_readdata  : out std_logic_vector(15 downto 0);  -- Data bus for read access
-      wbs_s1_writedata : in  std_logic_vector(15 downto 0);  -- Data bus for write access
-      wbs_s1_ack       : out std_logic;  -- Access acknowledge
-      wbs_s1_strobe    : in  std_logic;  -- Strobe
-      wbs_s1_cycle     : in  std_logic;  -- Cycle    
-      wbs_s1_write     : in  std_logic;  -- Write access
+      wbr : out wbr;
+      wbw : in wbw;
 
       -- irq from other IP
       irqport : in std_logic;
 
       -- Component external signals
-      gls_irq : out std_logic           -- IRQ request
+      irq : out std_logic           -- IRQ request
       );
 end entity;
 
@@ -67,12 +64,12 @@ begin
 -- ----------------------------------------------------------------------------
 --  External signals synchronization process
 -- ----------------------------------------------------------------------------
-  process(gls_clk, gls_reset)
+  process(clk, reset)
   begin
-    if(gls_reset = '1') then
+    if(reset = '1') then
       irq_r   <= '0';
       irq_old <= '0';
-    elsif(rising_edge(gls_clk)) then
+    elsif(rising_edge(clk)) then
       irq_r   <= irqport;
       irq_old <= irq_r;
     end if;
@@ -81,32 +78,32 @@ begin
 -- ----------------------------------------------------------------------------
 --  Interruption requests latching process on rising edge
 -- ----------------------------------------------------------------------------
-  process(gls_clk, gls_reset)
+  process(clk, reset)
   begin
-    if(gls_reset = '1') then
+    if(reset = '1') then
       irq_pend <= '0';
-    elsif(rising_edge(gls_clk)) then
-      irq_pend <= (irq_pend or ((irq_r and (not irq_old)) and irq_mask)) and (not irq_ack);
+    elsif(rising_edge(clk)) then
+      irq_pend <= (not irq_ack) and (irq_pend or (irq_r and (not irq_old) and irq_mask));
     end if;
   end process;
 
 -- ----------------------------------------------------------------------------
 --  Register reading process
 -- ----------------------------------------------------------------------------
-  process(gls_clk, gls_reset)
+  process(clk, reset)
   begin
-    if(gls_reset = '1') then
+    if(reset = '1') then
       rd_ack   <= '0';
       readdata <= (others => '0');
-    elsif(rising_edge(gls_clk)) then
+    elsif(rising_edge(clk)) then
       rd_ack <= '0';
-      if(wbs_s1_strobe = '1' and wbs_s1_write = '0' and wbs_s1_cycle = '1') then
+      if(wbw.strobe = '1' and wbw.writing = '0' and wbw.cycle = '1') then
         rd_ack <= '1';
-        if(wbs_s1_address = "00") then
+        if(wbw.address = "00") then
           readdata(0) <= irq_mask;
-        elsif (wbs_s1_address = "01") then
+        elsif (wbw.address = "01") then
           readdata(0) <= irq_pend;
-        elsif (wbs_s1_address = "10") then
+        elsif (wbw.address = "10") then
           readdata <= std_logic_vector(to_unsigned(id, 16));
         else
           readdata <= (others => '0');
@@ -118,30 +115,30 @@ begin
 -- ----------------------------------------------------------------------------
 --  Register update process
 -- ----------------------------------------------------------------------------
-  process(gls_clk, gls_reset)
+  process(clk, reset)
   begin
-    if(gls_reset = '1') then
+    if (reset = '1') then
       irq_ack  <= '0';
       wr_ack   <= '0';
       irq_mask <= '0';
-    elsif(rising_edge(gls_clk)) then
+    elsif (rising_edge(clk)) then
       irq_ack <= '0';
       wr_ack  <= '0';
 
-      if(wbs_s1_strobe = '1' and wbs_s1_write = '1' and wbs_s1_cycle = '1') then
+      if (wbw.strobe = '1' and wbw.writing = '1' and wbw.cycle = '1') then
         wr_ack <= '1';
-        if(wbs_s1_address = "00") then
-          irq_mask <= wbs_s1_writedata(0);
-        elsif(wbs_s1_address = "01") then
-          irq_ack <= wbs_s1_writedata(0);
+        if (wbw.address = "00") then
+          irq_mask <= wbw.writedata(0);
+        elsif (wbw.address = "01") then
+          irq_ack <= wbw.writedata(0);
         end if;
       end if;
     end if;
   end process;
 
-  gls_irq <= irq_level when (irq_pend /= '0' and gls_reset = '0') else not irq_level;
+  irq <= irq_level when (irq_pend /= '0' and reset = '0') else not irq_level;
 
-  wbs_s1_ack      <= rd_ack or wr_ack;
-  wbs_s1_readdata <= readdata when (wbs_s1_strobe = '1' and wbs_s1_write = '0' and wbs_s1_cycle = '1') else (others => '0');
+  wbr.ack      <= rd_ack or wr_ack;
+  wbr.readdata <= readdata when (wbw.strobe = '1' and wbw.writing = '0' and wbw.cycle = '1') else (others => '0');
 
 end architecture RTL;
