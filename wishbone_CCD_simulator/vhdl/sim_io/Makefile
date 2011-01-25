@@ -1,6 +1,6 @@
-OBJS = data_wbs_bridge.o sclk_data_acq.o irq_mngr.o wishbone_wrapper.o rstgen_syscon.o top_mod.o
-PROGS = data_wbs_bridge_tb
-SIMS = data_wbs_bridge_tb.vcd
+OBJS = common_decs.o data_bridge.o sclk_data_acq.o irq_mngr.o wishbone_wrapper.o rstgen_syscon.o top_mod.o
+PROGS = data_bridge_tb
+SIMS = data_bridge_tb.vcd
 BITMAP=blink.bit
 COMP=ghdl
 VHDL_C=$(COMP) -a 
