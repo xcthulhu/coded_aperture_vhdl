@@ -14,7 +14,8 @@ use IEEE.STD_LOGIC_UNSIGNED.all;
 entity fifo_syn is
   generic (
     width     : integer := 16;
-    addrdepth : integer := 10);         -- Depth of the FIFO: 2^addrdepth
+    addrdepth : integer := 10;
+    memdepth  : integer := 1023);         -- Depth of the FIFO: 2^addrdepth-1
   port (
     clk        : in  std_logic;
     din        : in  std_logic_vector(width-1 downto 0);
@@ -30,7 +31,7 @@ end fifo_syn;
 
 architecture fifo_syn_a of fifo_syn is
   subtype wrdtype is std_logic_vector(width-1 downto 0);
-  type regtype is array (0 to (2 ** addrdepth)-1) of wrdtype;
+  type regtype is array (0 to memdepth) of wrdtype;
   signal reg : regtype;
 
   signal RdCntr : std_logic_vector(addrdepth-1 downto 0);
