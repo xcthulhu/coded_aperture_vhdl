@@ -3,7 +3,7 @@ PROGS = data_bridge_tb
 SIMS = data_bridge_tb.vcd
 BITMAP=blink.bit
 COMP=ghdl
-VHDL_C=$(COMP) -a 
+VHDL_C=$(COMP) -a --ieee=synopsys -fexplicit
 VHDL_E=$(COMP) -e
 VHDL_R=$(COMP) -r
 DEVEL_BASE=../..
