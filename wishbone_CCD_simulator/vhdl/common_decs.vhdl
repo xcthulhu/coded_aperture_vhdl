@@ -23,14 +23,14 @@ package common_decs is
     writedata : std_logic_vector(15 downto 0);  -- Data bus written by wishbone
   end record;
 
-  -- Methods for checking the wishbone bus
+  -- Methods for checking for access to the wishbone bus
   ---- For wbw.writing = '0'
   function check_wb0(wbw : wbw ; addr_id : addr_id) return boolean ;
   ---- For wbw.writing = '1'
   function check_wb1(wbw : wbw ; addr_id : addr_id) return boolean ;
 
    -- i.MX Control Signals
-   type imx is
+   type imx_in is
    record
       address   : std_logic_vector(11 downto 0);  -- LSB not used 
       cs_n      : std_logic;
