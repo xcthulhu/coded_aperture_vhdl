@@ -81,6 +81,8 @@
 #define SXI_STATUS 	(0x02)
 #define SXI_ID_OFFSET  	(0x00)
 
+#define FIFO_DATA_AVAILABLE (0x1)
+
 /* platform device */
 struct plat_sxi_port{
 	const char *name;	/*instance name */
