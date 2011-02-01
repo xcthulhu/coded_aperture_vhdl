@@ -19,13 +19,14 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
+use IEEE.std_logic_arith.all;
 
 use work.common_decs.all;
 
 entity irq_mngr is
   generic
     (
-      id        : natural   := 0;
+      id        : addr_id   := "01";
       irq_level : std_logic := '1'
       );
   port
@@ -36,13 +37,13 @@ entity irq_mngr is
 
       -- Wishbone interface signals
       wbr : out wbr;
-      wbw : in wbw;
+      wbw : in  wbw;
 
       -- irq from other IP
       irqport : in std_logic;
 
       -- Component external signals
-      irq : out std_logic           -- IRQ request
+      irq : out std_logic               -- IRQ request
       );
 end entity;
 
@@ -55,11 +56,14 @@ architecture RTL of irq_mngr is
   signal irq_pend : std_logic;
   signal irq_ack  : std_logic;
   signal irq_mask : std_logic;
-  signal readdata : std_logic_vector(15 downto 0);
+  signal readdata : std_logic_vector (15 downto 0);
   signal rd_ack   : std_logic;
   signal wr_ack   : std_logic;
+  signal addr     : std_logic_vector (1 downto 0);
 
 begin
+
+  addr <= wbw.address(1 downto 0);
 
 -- ----------------------------------------------------------------------------
 --  External signals synchronization process
@@ -94,20 +98,20 @@ begin
   begin
     if(reset = '1') then
       rd_ack   <= '0';
-      readdata <= (others => '0');
-    elsif(rising_edge(clk)) then
+      readdata <= (others => 'Z');
+    elsif (rising_edge(clk)) then
       rd_ack <= '0';
-      if(wbw.strobe = '1' and wbw.writing = '0' and wbw.cycle = '1') then
+      if check_wb0(wbw, id) then
         rd_ack <= '1';
-        if(wbw.address = "00") then
-          readdata(0) <= irq_mask;
-        elsif (wbw.address = "01") then
-          readdata(0) <= irq_pend;
-        elsif (wbw.address = "10") then
-          readdata <= std_logic_vector(to_unsigned(id, 16));
-        else
-          readdata <= (others => '0');
-        end if;
+        case addr is
+          when "00" => readdata(0) <= irq_mask;
+          when "01" => readdata(0) <= irq_pend;
+          when "10" => readdata    <= ext(id, readdata'length);
+          when "11" => readdata    <= (others => 'Z');
+          when others => null;
+        end case;
+      else
+        readdata <= (others => 'Z');
       end if;
     end if;
   end process;
@@ -124,21 +128,20 @@ begin
     elsif (rising_edge(clk)) then
       irq_ack <= '0';
       wr_ack  <= '0';
-
-      if (wbw.strobe = '1' and wbw.writing = '1' and wbw.cycle = '1') then
+      if check_wb1(wbw, id) then
         wr_ack <= '1';
-        if (wbw.address = "00") then
-          irq_mask <= wbw.writedata(0);
-        elsif (wbw.address = "01") then
-          irq_ack <= wbw.writedata(0);
-        end if;
+        case addr is
+          when "00"   => irq_mask <= wbw.writedata(0);
+          when "01"   => irq_ack  <= wbw.writedata(0);
+          when others => null;
+        end case;
       end if;
     end if;
   end process;
 
   irq <= irq_level when (irq_pend /= '0' and reset = '0') else not irq_level;
 
-  wbr.ack      <= rd_ack or wr_ack;
-  wbr.readdata <= readdata when (wbw.strobe = '1' and wbw.writing = '0' and wbw.cycle = '1') else (others => '0');
+  wbr.ack      <= rd_ack or wr_ack when check_wb0(wbw, id) else 'Z' ;
+  wbr.readdata <= readdata         when check_wb0(wbw, id) else (others => 'Z') ;
 
 end architecture RTL;
