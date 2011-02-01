@@ -1,27 +1,18 @@
+WORK = CCD
 OBJS = common_decs.o intercon_decs.o data_bridge.o fifo.o wb_fifo.o sclk_data_acq.o irq_mngr.o wishbone_wrapper.o intercon.o rstgen_syscon.o top_mod.o
-PROGS = data_bridge_tb
-SIMS = data_bridge_tb.vcd
 BITMAP=blink.bit
 COMP=ghdl
-VHDL_C=$(COMP) -a --ieee=synopsys -fexplicit --warn-reserved --warn-default-binding --warn-binding --warn-library --warn-vital-generic --warn-delayed-checks --warn-body --warn-specs --warn-unused
-VHDL_E=$(COMP) -e
-VHDL_R=$(COMP) -r
+VHDL_C=$(COMP) -a --work=$(WORK) --ieee=synopsys -fexplicit --warn-reserved --warn-default-binding --warn-binding --warn-library --warn-vital-generic --warn-delayed-checks --warn-body --warn-specs --warn-unused
+VHDL_E=$(COMP) -e --work=$(WORK) 
+VHDL_R=$(COMP) -r --work=$(WORK)
 DEVEL_BASE=../..
 RM=rm -f
-RMDIR=rm -rf
 
 #all: $(OBJS) $(PROGS) $(SIMS) $(BITMAP)
 all: $(OBJS)
 
 %.o : %.vhdl
 	$(VHDL_C) $< 
-
-%_tb : %_tb.vhdl %.o
-	$(VHDL_C) $<
-	$(VHDL_E) $@
-
-%_tb.vcd : %_tb
-	$(VHDL_R) $< --vcd=$@
 
 # Make instructions creating a bitmap from xilinx synthesis tools
 # adapted from http://www.excamera.com/sphinx/fpga-makefile.html
@@ -39,6 +30,4 @@ install : install_bitmap
 
 clean :
 	# Clean GHDL products
-	$(RM) *.o *.cf $(PROGS) *.vcd
-	$(RM) -r work
-	$(RM) *~
+	$(RM) $(OBJS) *.cf
