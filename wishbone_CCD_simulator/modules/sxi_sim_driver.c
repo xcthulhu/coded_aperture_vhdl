@@ -38,6 +38,8 @@
 #include <asm/uaccess.h>	/* copy_to_user function */
 #include <linux/ioport.h>	/* request_mem_region */
 #include <asm/io.h>		/* readw() writew() */
+#include <linux/circ_buf.h>
+#include <linux/wait.h>
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,27)
 /* hardware addresses */
@@ -65,9 +67,10 @@ struct sxi_dev {
 	dev_t devno;          /* to store Major and minor numbers */
 	wait_queue_head_t wait;
 	struct sxi_cb { 
-		int head, tail,
+		int head, tail;
 		int overflow;
-		u16 data[CB_SIZE] } ccd_clocks;
+		u16 data[CB_SIZE];
+	} ccd_clocks;
 };
 
 /*
@@ -113,22 +116,22 @@ ssize_t sxi_read(struct file *fildes, char __user *buff,
 	struct sxi_dev *ldev = fildes->private_data;
 	ssize_t retval = 0;
 	
-	if( ldev->ccd_clocks->overflow ) return -EPIPE;	/* input buffer overflow */
+	if( ldev->ccd_clocks.overflow ) return -EPIPE;	/* input buffer overflow */
 
-	while( cb_count( ldev->ccd_clocks) == 0 ) {	/* block */
-		if(wait_event_interruptible(ldev->wait, (cb_count( ldev->ccd_clocks))))
+	while( cb_count( &ldev->ccd_clocks) == 0 ) {	/* block */
+		if(wait_event_interruptible(ldev->wait, (cb_count( &ldev->ccd_clocks))))
 			return -ERESTARTSYS;
 	}
 	
 	while( count > 0 ) {
-		size_t bytes = sizeof(u16) * cb_count( ldev->ccd_clocks));
+		size_t bytes = sizeof(u16) * cb_count( &ldev->ccd_clocks);
 		if( bytes == 0 ) break;
 		if( bytes > count ) bytes = count;
-		if (copy_to_user( buff, cb_outp( ldev->ccd_clocks), bytes)) {
+		if (copy_to_user( buff, cb_outp( &ldev->ccd_clocks), bytes)) {
 			printk(KERN_WARNING "sxi : copy to user data error\n");
 			return -EFAULT;
 		}
-		cb_drop( bytes/sizeof(u16), ldev->ccd_clocks);
+		cb_drop( bytes/sizeof(u16), &ldev->ccd_clocks);
 		buff += bytes;
 		count -= bytes;
 		retval += bytes;
@@ -140,7 +143,7 @@ ssize_t sxi_read(struct file *fildes, char __user *buff,
 
 /* Write test data into queue as if we're the interrupt handler */
 
-ssize_t sxi_write(struct file *fildes, char __user *buff, 
+ssize_t sxi_write(struct file *fildes, const char __user *buff, 
                     size_t count, loff_t *offp)
 {
 	struct sxi_dev *ldev = fildes->private_data;
@@ -148,19 +151,19 @@ ssize_t sxi_write(struct file *fildes, char __user *buff,
 
 	/* If buffer is full, reader should be awake, so yield */
 	
-	while( cb_space( ldev->ccd_clocks) == 0 ) schedule();
+	while( cb_space( &ldev->ccd_clocks) == 0 ) schedule();
 
-	while( count > 0 && cb_space(ldev->ccd_clocks) > 0 ) {
+	while( count > 0 && cb_space(&ldev->ccd_clocks) > 0 ) {
 		u16 d;
-		copy_from_user( &d, buff, sizeof(d));
-		cb_put( d, ldev->ccd_clocks );
+		if(copy_from_user( &d, buff, sizeof(d))) return -EFAULT;
+		cb_put( d, &ldev->ccd_clocks );
 		count -= sizeof(d);
 		retval += sizeof(d);
 		buff += sizeof(d);
 	}
 	
 	/* wake up reading process */
-	wake_up_interruptable( ldev-> wait );	
+	wake_up_interruptible( &ldev-> wait );	
 	
 	*offp += retval;
 	return retval;
@@ -202,11 +205,11 @@ static irqreturn_t sxi_interrupt(int irq, void *dev_id)
 {
 	struct sxi_dev *ldev = dev_id;
 
-	while( ioread16(ldev->membase+SXI_STATUS) & FIFO_DATA_AVAILABLE))
-		cb_put( ioread16(ldev->membase+SXI_FIFO), ldev->ccd_clocks ));
+	while( ioread16(ldev->membase+SXI_STATUS) & FIFO_DATA_AVAILABLE)
+		cb_put( ioread16(ldev->membase+SXI_FIFO), &ldev->ccd_clocks );
 	
 	/* wake up reading process */
-	wake_up_interruptable( ldev-> wait );
+	wake_up_interruptible( &ldev-> wait );
 	
 	return IRQ_HANDLED;
 }
@@ -283,7 +286,7 @@ static int sxi_probe(struct platform_device *pdev)
 
 	init_waitqueue_head(&sdev->wait);
 	init_MUTEX(&sdev->sem);
-	cb_init( &sdev->ccd_clocks, sdev->data);
+	cb_init( &sdev->ccd_clocks );
 
 	/****************************/
 	/* Init the cdev structure  */
@@ -345,8 +348,8 @@ error_id:
 
 static int __devexit sxi_remove(struct platform_device *pdev)
 {
-	struct plat_button_port *dev = pdev->dev.platform_data;
-	struct button_dev *sdev = (*dev).sdev;
+	struct plat_sxi_port *dev = pdev->dev.platform_data;
+	struct sxi_dev *sdev = (*dev).sdev;
 
 	/* freeing irq */
 	free_irq(dev->interrupt_number, sdev);
