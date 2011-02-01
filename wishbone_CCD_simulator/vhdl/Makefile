@@ -1,9 +1,9 @@
-OBJS = common_decs.o data_bridge.o fifo.o sclk_data_acq.o irq_mngr.o wishbone_wrapper.o rstgen_syscon.o top_mod.o
+OBJS = common_decs.o intercon_decs.o data_bridge.o fifo.o wb_fifo.o sclk_data_acq.o irq_mngr.o wishbone_wrapper.o intercon.o rstgen_syscon.o top_mod.o
 PROGS = data_bridge_tb
 SIMS = data_bridge_tb.vcd
 BITMAP=blink.bit
 COMP=ghdl
-VHDL_C=$(COMP) -a --ieee=synopsys -fexplicit
+VHDL_C=$(COMP) -a --ieee=synopsys -fexplicit --warn-reserved --warn-default-binding --warn-binding --warn-library --warn-vital-generic --warn-delayed-checks --warn-body --warn-specs --warn-unused
 VHDL_E=$(COMP) -e
 VHDL_R=$(COMP) -r
 DEVEL_BASE=../..
@@ -11,7 +11,7 @@ RM=rm -f
 RMDIR=rm -rf
 
 #all: $(OBJS) $(PROGS) $(SIMS) $(BITMAP)
-all: $(OBJS) $(PROGS) $(SIMS)
+all: $(OBJS)
 
 %.o : %.vhdl
 	$(VHDL_C) $< 
