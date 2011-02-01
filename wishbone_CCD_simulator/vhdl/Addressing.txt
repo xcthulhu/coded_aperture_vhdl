@@ -16,9 +16,12 @@ fifo:
 
 Id:	"0000010100011000" (0x0518)
 
-Lowest Addrbits: 1
+Lowest Addrbits: 2
 
-Regs:	"0"	data		r
-	"1"	id		r
+Regs:	"10"	data		r
+	"01"	status		r
+	"00"	id		r
 
 High bits:	"000001"	
+
+The LSB of the FIFO status register is 1 if data available.
