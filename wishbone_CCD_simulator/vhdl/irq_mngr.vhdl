@@ -26,7 +26,7 @@ use work.common_decs.all;
 entity irq_mngr is
   generic
     (
-      id        : addr_id   := "01";
+      id        : device_id := x"1009";
       irq_level : std_logic := '1'
       );
   port
@@ -98,20 +98,20 @@ begin
   begin
     if(reset = '1') then
       rd_ack   <= '0';
-      readdata <= (others => 'Z');
+      readdata <= (others => '0');
     elsif (rising_edge(clk)) then
       rd_ack <= '0';
-      if check_wb0(wbw, id) then
+      if check_wb0(wbw) then
         rd_ack <= '1';
         case addr is
-          when "00" => readdata(0) <= irq_mask;
-          when "01" => readdata(0) <= irq_pend;
-          when "10" => readdata    <= ext(id, readdata'length);
-          when "11" => readdata    <= (others => 'Z');
+          when "00"   => readdata <= (0 => irq_mask, others => '0');
+          when "01"   => readdata <= (0 => irq_pend, others => '0');
+          when "10"   => readdata    <= ext(id, readdata'length);
+          when "11"   => readdata    <= (others => '0');
           when others => null;
         end case;
       else
-        readdata <= (others => 'Z');
+        readdata <= (others => '0');
       end if;
     end if;
   end process;
@@ -128,7 +128,7 @@ begin
     elsif (rising_edge(clk)) then
       irq_ack <= '0';
       wr_ack  <= '0';
-      if check_wb1(wbw, id) then
+      if check_wb1(wbw) then
         wr_ack <= '1';
         case addr is
           when "00"   => irq_mask <= wbw.writedata(0);
@@ -141,7 +141,7 @@ begin
 
   irq <= irq_level when (irq_pend /= '0' and reset = '0') else not irq_level;
 
-  wbr.ack      <= rd_ack or wr_ack when check_wb0(wbw, id) else 'Z' ;
-  wbr.readdata <= readdata         when check_wb0(wbw, id) else (others => 'Z') ;
+  wbr.ack      <= rd_ack or wr_ack;
+  wbr.readdata <= readdata;
 
 end architecture RTL;
