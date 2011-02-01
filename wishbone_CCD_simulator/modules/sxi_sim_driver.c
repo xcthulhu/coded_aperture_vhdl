@@ -116,6 +116,7 @@ ssize_t sxi_read(struct file *fildes, char __user *buff,
 	struct sxi_dev *ldev = fildes->private_data;
 	ssize_t retval = 0;
 	
+	if( count & 1 ) return -EINVAL;			/* odd numbers not allowed */
 	if( ldev->ccd_clocks.overflow ) return -EPIPE;	/* input buffer overflow */
 
 	while( cb_count( &ldev->ccd_clocks) == 0 ) {	/* block */
@@ -148,6 +149,8 @@ ssize_t sxi_write(struct file *fildes, const char __user *buff,
 {
 	struct sxi_dev *ldev = fildes->private_data;
 	ssize_t retval = 0;
+
+	if( count & 1 ) return -EINVAL;			/* odd numbers not allowed */
 
 	/* If buffer is full, reader should be awake, so yield */
 	

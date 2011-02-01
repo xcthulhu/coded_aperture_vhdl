@@ -46,7 +46,7 @@ static struct plat_sxi_port plat_sxi_data = {
 	.interrupt_number = SXI_IRQ,
 	.num = 0,
 	.membase = (void *)(ARMADEUS_FPGA_BASE_ADDR_VIRT + 0xc),
-	.idnum = 0x0518,
+	.idnum = 0x0523,
 	.idoffset = 0x00 * (16 / 8)
 };
 
