@@ -26,7 +26,7 @@ architecture RTL of top_module is
     port (
       reset    : in    std_logic;
       clk      : in    std_logic;
-      imx_data : inout std_logic_vector(15 downto 0);
+      imx_data : inout std_logic_vector(chan_size-1 downto 0);
       imx      : in    imx_in;
       wbr      : in    wbr;
       wbw      : out   wbw
@@ -35,7 +35,7 @@ architecture RTL of top_module is
 
   component irq_mngr
     generic(
-      id        : natural   := 1;
+      id        : device_id := x"1009";
       irq_level : std_logic := '1'
       );
     port (
@@ -48,14 +48,39 @@ architecture RTL of top_module is
       );
   end component;
 
+  component intercon
+    port (
+      clk, reset                 : in  std_logic;
+      irq_wbr, fifo_wbr          : in  wbr;
+      irq_wbw, fifo_wbw          : out wbw;
+      irq_clk, irq_reset,
+      fifo_clk, fifo_reset,
+      wrapper_clk, wrapper_reset : out std_logic;
+      gwbr                       : out wbr;
+      gwbw                       : in  wbw
+      );
+  end component;
+
+  component wb_fifo is
+    generic
+      (id : device_id := x"0523");
+    port
+      (
+        clk, reset, wr_en : in  std_logic;
+        din               : in  std_logic_vector(chan_size-1 downto 0);
+        irqport           : out std_logic;
+        wbw               : in  wbw;
+        wbr               : out wbr
+        );
+  end component;
+
   component data_bridge
     port (
-      clk     : in  std_logic;
-      STROBE  : in  std_logic;
-      a, b    : in  std_logic_vector(7 downto 0);
-      irqport : out std_logic;
-      wbw     : in  wbw;
-      wbr     : out wbr
+      clk    : in  std_logic;
+      STROBE : in  std_logic;
+      a, b   : in  std_logic_vector(7 downto 0);
+      wr_en  : out std_logic;
+      dout   : out std_logic_vector(15 downto 0)
       );
   end component;
 
@@ -80,35 +105,80 @@ architecture RTL of top_module is
   end component;
 
   -- Signals
-  -- Data vectors
-  signal a, b           : std_logic_vector (7 downto 0);
-  -- Reset and IRQ
+  ---- Data vectors
+  signal a, b       : std_logic_vector (7 downto 0);
+  signal bridge_out : std_logic_vector(chan_size-1 downto 0);
+
+  ---- Write Instruction for FIFO
+  signal wr_en : std_logic;
+
+  ---- Reset and IRQ
   signal reset, irqport : std_logic;
-  -- Wishbone Bus
-  signal wbw            : wbw;
-  signal wbr            : wbr;
+
+  ---- Intercon
+  signal irq_clk, irq_reset,
+    fifo_clk, fifo_reset,
+    wrapper_clk, wrapper_reset : std_logic;
+  signal gwbr, irq_wbr, fifo_wbr : wbr;
+  signal gwbw, irq_wbw, fifo_wbw : wbw;
+
 begin
-  
+
+  intercon00 : intercon
+    port map
+    (
+      clk           => clk,
+      reset         => reset,
+      irq_wbr       => irq_wbr,
+      irq_wbw       => irq_wbw,
+      irq_clk       => irq_clk,
+      irq_reset     => irq_reset,
+      fifo_wbr      => fifo_wbr,
+      fifo_wbw      => fifo_wbw,
+      fifo_clk      => fifo_clk,
+      fifo_reset    => fifo_reset,
+      gwbr          => gwbr,
+      gwbw          => gwbw,
+      wrapper_clk   => wrapper_clk,
+      wrapper_reset => wrapper_reset
+      );
+
   wrapper : wishbone_wrapper
     port map (
-      reset    => reset,
-      clk      => clk,
+      reset    => wrapper_reset,
+      clk      => wrapper_clk,
       imx_data => imx_data,
       imx      => imx,
-      wbw      => wbw,
-      wbr      => wbr
+      wbw      => gwbw,
+      wbr      => gwbr
       );
 
   irq_mngr00 : irq_mngr
     generic map (
-      id        => 1,
+      id        => x"1009",
       irq_level => '1'
       )
     port map (
-      clk     => clk,
-      reset   => reset,
+      clk     => irq_clk,
+      reset   => irq_reset,
+      wbr     => irq_wbr,
+      wbw     => irq_wbw,
       irqport => irqport,
       irq     => irq
+      );
+
+  wb_fifo00 : wb_fifo
+    generic map (
+      id => x"0523"
+      )
+    port map (
+      clk     => fifo_clk,
+      reset   => fifo_reset,
+      irqport => irqport,
+      din     => bridge_out,
+      wr_en   => wr_en,
+      wbw     => fifo_wbw,
+      wbr     => fifo_wbr
       );
 
   rstgen : rstgen_syscon
@@ -122,13 +192,12 @@ begin
 
   bridge : data_bridge
     port map (
-      clk     => clk,
-      STROBE  => STROBE,
-      a       => a,
-      b       => b,
-      irqport => irqport,
-      wbw     => wbw,
-      wbr     => wbr
+      clk    => clk,
+      STROBE => STROBE,
+      a      => a,
+      b      => b,
+      dout   => bridge_out,
+      wr_en  => wr_en
       );
 
   data_acq : sclk_data_acq
