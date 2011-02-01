@@ -1,0 +1,24 @@
+Decode high six bits for select, low n bits for register within device. The LSB doesn't count in this calculation because it's a 16 bit bus, but the addresses are byte addresses.
+
+irq:
+
+Id: 	"0001000000001001" (0x1009)
+
+Lowest Addrbits: 2
+
+Regs:	"00"	mask		rw
+	"01"	pend/ack	rw
+	"10"	id		r
+
+High bits:	"000000"
+
+fifo:
+
+Id:	"0000010100011000" (0x0518)
+
+Lowest Addrbits: 1
+
+Regs:	"0"	data		r
+	"1"	id		r
+
+High bits:	"000001"	
