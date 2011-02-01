@@ -76,11 +76,10 @@ architecture RTL of top_module is
 
   component data_bridge
     port (
-      clk    : in  std_logic;
-      STROBE : in  std_logic;
-      a, b   : in  std_logic_vector(7 downto 0);
-      wr_en  : out std_logic;
-      dout   : out std_logic_vector(15 downto 0)
+      clk, STROBE : in  std_logic;
+      a, b        : in  std_logic_vector(7 downto 0);
+      wr_en       : out std_logic;
+      dout        : out std_logic_vector(15 downto 0)
       );
   end component;
 
