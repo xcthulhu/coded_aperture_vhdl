@@ -26,8 +26,8 @@ begin
     if (rising_edge(clk)) then
       if (SCLK /= previous_SCLK) then   -- If "rising edge" of SCLK value
         if (SCLK = '1') then
-          a_val <= a_val(7 downto 1) & a_in;
-          b_val <= b_val(7 downto 1) & b_in;
+          a_val <= a_val(6 downto 0) & a_in;
+          b_val <= b_val(6 downto 0) & b_in;
         end if;
         previous_SCLK <= SCLK;
       end if;
