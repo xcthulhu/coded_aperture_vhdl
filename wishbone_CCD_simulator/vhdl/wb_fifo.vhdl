@@ -16,7 +16,7 @@ entity wb_fifo is
       reset   : in  std_logic;
       -- Data Input
       din     : in  std_logic_vector(chan_size-1 downto 0);
-      -- Read instruction bit
+      -- Write Instruction bit
       wr_en   : in  std_logic;
       -- IRQ System
       irqport : out std_logic;
