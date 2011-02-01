@@ -1,56 +1,73 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
-use IEEE.numeric_std.all;
+use IEEE.std_logic_arith.all;
+
+library C;
+use C.stdio_h.all;
+
+library CCD;
+use CCD.common_decs.all;
+
 use work.common_decs.all;
 
---  A testbench has no ports.
-entity data_bridge_tb is end data_bridge_tb;
+--  A testbench has no ports
+entity I_tb is end;
 
-architecture behav of data_bridge_tb is
-  component data_bridge is
+architecture behav of I_tb is
+  component sclk_data_acq is
     port (
-      clk, STROBE : in std_logic ;
-      irqport : out std_logic ;
-      a, b : in  std_logic_vector(7 downto 0);
-      wbr : out wbr;
-      wbw : in wbw);
+      clk, SCLK,
+      a_in, b_in : in  std_logic;
+      a, b       : out std_logic_vector(7 downto 0)
+      );
   end component;
-  --  Specifies which entity is bound to the component
-  for dut : data_bridge use entity work.data_bridge;
-  signal clk, STROBE, irqport : std_logic;
-  signal wbw : wbw;
-  signal a, b : std_logic_vector(7 downto 0);
-  signal wbr : wbr;
-
+  for dut1   : sclk_data_acq use entity CCD.sclk_data_acq;
+  signal clk : std_logic := '0';
+  signal SCLK, a_in,
+    b_in, STROBE : std_logic;
+  signal a : std_logic_vector(7 downto 0) := (others => '0');
+  signal b : std_logic_vector(7 downto 0) := (others => '0');
 begin
-  dut : data_bridge
-    port map ( clk => clk
-             , STROBE => STROBE
-             , irqport => irqport
-             , wbr => wbr
-             , wbw => wbw
-             , a => a
-             , b => b
-             );
+  dut1 : sclk_data_acq
+    port map (clk  => clk,
+              SCLK => SCLK,
+              a_in => a_in,
+              b_in => b_in,
+              a    => a,
+              b    => b
+              );
+
   process
-    -- These control the looping we will do
-    constant the_end : integer := 10000;
-    variable count   : integer;
+    variable fin                          : CFILE   := fopen("clocksim.dat", "r");
+    variable sclkv, a_inv, b_inv, strobev : integer;
+    variable n                            : integer := 0;
+    constant rate                         : integer := 8;
   begin
-    clk <= '0';
-    STROBE <= '0';
-    wbw.strobe <= '0';
-    wbw.cycle <= '0';
-    wbw.writing <= '0';
-    a <= (others => '0');
-    b <= (others => '0');
-    for count in 0 to the_end loop
-      wait for 2 ns;
-      clk <= not clk;
-      if ((count mod 8) = 0) then
-        STROBE <= not STROBE;
+    while (not(feof(fin))) loop
+      if (n = 0) then
+        -- Get values from file
+        fscanf(fin, "%d", sclkv);
+        fscanf(fin, "%d", a_inv);
+        fscanf(fin, "%d", b_inv);
+        fscanf(fin, "%d\n", strobev);
+
+        -- Assign values to signals
+        SCLK   <= int_to_bit(sclkv);
+        a_in   <= int_to_bit(a_inv);
+        b_in   <= int_to_bit(b_inv);
+        STROBE <= int_to_bit(strobev);
+
+        -- Print values
+        printf("%d ", sclkv);
+        printf("%d ", a_inv);
+        printf("%d ", b_inv);
+        printf("%d\n", strobev);
       end if;
+      n   := (n + 1) mod rate;
+      wait for 1 ns;
+      clk <= not clk;
     end loop;
+    fclose(fin);
     wait;
   end process;
 end;
