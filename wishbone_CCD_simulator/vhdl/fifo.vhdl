@@ -77,7 +77,7 @@ begin
           wr_ack <= '0';
 
         when "01" =>                    -- only write
-          emptyxB <= '1';
+          emptyxB <= '0';
           if fullxB = '0' then          -- not full
             reg(conv_integer(WrCntr)) <= din;
             if WrCntr+1 = RdCntr then
