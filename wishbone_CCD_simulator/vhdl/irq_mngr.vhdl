@@ -34,14 +34,11 @@ entity irq_mngr is
       -- Global Signals
       clk   : in std_logic;
       reset : in std_logic;
-
       -- Wishbone interface signals
-      wbr : out wbr;
-      wbw : in  wbw;
-
+      wbr : out wbrs;
+      wbw : in  wbws;
       -- irq from other IP
       irqport : in std_logic;
-
       -- Component external signals
       irq : out std_logic               -- IRQ request
       );
