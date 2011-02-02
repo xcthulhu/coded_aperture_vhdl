@@ -106,7 +106,7 @@ begin
         case addr is
           when "00"   => readdata <= (0 => irq_mask, others => '0');
           when "01"   => readdata <= (0 => irq_pend, others => '0');
-          when "10"   => readdata    <= ext(id, readdata'length);
+          when "10"   => readdata    <= id;
           when "11"   => readdata    <= (others => '0');
           when others => null;
         end case;
