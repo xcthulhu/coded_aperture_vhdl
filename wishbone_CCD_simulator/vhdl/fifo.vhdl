@@ -18,21 +18,19 @@ entity fifo_syn is
   port (
     -- Inputs
     ---- Global signals
-    clk   : in std_logic;
-    reset : in std_logic;
+    clk, reset   : in std_logic;
     ---- Data
-    din   : in std_logic_vector(width-1 downto 0);
+    din          : in std_logic_vector(width-1 downto 0);
     ---- Flags for Read and Write instructions
-    rd_en : in std_logic;
-    wr_en : in std_logic;
+    rd_en, wr_en : in std_logic;
 
     -- Outputs
-    dout       : out std_logic_vector(width-1 downto 0);
-    data_count : out std_logic_vector(addrdepth-1 downto 0);
-    empty      : out std_logic;
-    full       : out std_logic;
-    wr_ack     : out std_logic);
-end fifo_syn;
+    ---- Data
+    dout                : out std_logic_vector(width-1 downto 0);
+    ---- Status
+    data_count          : out std_logic_vector(addrdepth-1 downto 0);
+    empty, full, wr_ack : out std_logic);
+end entity;
 
 architecture fifo_syn_a of fifo_syn is
   subtype wrdtype is std_logic_vector(width-1 downto 0);
@@ -92,6 +90,7 @@ begin
           
         when "00" =>
           wr_ack <= '0';
+          
         when others => null;
       end case;
     end if;
@@ -103,5 +102,4 @@ begin
   empty      <= emptyxB;
   data_count <= DCntr;
 
-end fifo_syn_a;
-
+end architecture;
