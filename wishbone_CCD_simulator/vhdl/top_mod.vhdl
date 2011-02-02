@@ -3,7 +3,7 @@ use IEEE.STD_LOGIC_1164.all;
 use IEEE.numeric_std.all;
 use work.common_decs.all;
 
-entity top_module is
+entity top_mod is
   port
     (
       -- External Clock
@@ -18,9 +18,9 @@ entity top_module is
       SCLK       : in    std_logic;
       STROBE     : in    std_logic
       );
-end entity top_module;
+end entity;
 
-architecture RTL of top_module is
+architecture RTL of top_mod is
   -- Components
   component wishbone_wrapper
     port (
