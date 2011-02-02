@@ -16,32 +16,37 @@ entity ii_tb is end;
 architecture behav of ii_tb is
   component sclk_data_acq is
     port (
-      clk, SCLK,
-      a_in, b_in : in  std_logic;
-      a, b       : out std_logic_vector(7 downto 0)
+      sysc             : in  syscon;
+      SCLK, a_in, b_in : in  std_logic;
+      a, b             : out std_logic_vector(7 downto 0)
       );
   end component;
 
   component data_bridge is
     port (
-      clk, STROBE : in  std_logic;
-      a, b        : in  std_logic_vector(7 downto 0);
-      wr_en       : out std_logic;
-      dout        : out std_logic_vector(15 downto 0)
+      sysc   : in  syscon;
+      STROBE : in  std_logic;
+      a, b   : in  std_logic_vector(7 downto 0);
+      wr_en  : out std_logic;
+      dout   : out std_logic_vector(15 downto 0)
       );
   end component;
 
-  for dut1   : sclk_data_acq use entity CCD.sclk_data_acq;
-  for dut2   : data_bridge use entity CCD.data_bridge;
-  signal clk : std_logic := '0';
+  for dut1          : sclk_data_acq use entity CCD.sclk_data_acq;
+  for dut2          : data_bridge use entity CCD.data_bridge;
+  signal clk, reset : std_logic := '0';
+  signal sysc       : syscon;
   signal SCLK, a_in,
     b_in, STROBE, wr_en : std_logic;
   signal a          : std_logic_vector(7 downto 0)           := (others => '0');
   signal b          : std_logic_vector(7 downto 0)           := (others => '0');
   signal bridge_out : std_logic_vector(chan_size-1 downto 0) := (others => '0');
 begin
+  sysc.clk   <= clk;
+  sysc.reset <= reset;
+
   dut1 : sclk_data_acq
-    port map (clk  => clk,
+    port map (sysc => sysc,
               SCLK => SCLK,
               a_in => a_in,
               b_in => b_in,
@@ -51,7 +56,7 @@ begin
 
   dut2 : data_bridge
     port map (
-      clk    => clk,
+      sysc   => sysc,
       STROBE => STROBE,
       a      => a,
       b      => b,

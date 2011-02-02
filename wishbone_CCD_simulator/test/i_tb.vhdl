@@ -16,21 +16,26 @@ entity I_tb is end;
 architecture behav of I_tb is
   component sclk_data_acq is
     port (
-      clk, SCLK,
+      sysc : in syscon;
+      sclk : in std_logic;
       a_in, b_in : in  std_logic;
       a, b       : out std_logic_vector(7 downto 0)
       );
   end component;
   for dut1   : sclk_data_acq use entity CCD.sclk_data_acq;
-  signal clk : std_logic := '0';
+  signal clk,reset : std_logic := '0';
+  signal sysc : syscon;
   signal SCLK, a_in,
     b_in, STROBE : std_logic;
   signal a : std_logic_vector(7 downto 0) := (others => '0');
   signal b : std_logic_vector(7 downto 0) := (others => '0');
 begin
+  sysc.clk <= clk;
+  sysc.reset <= reset;
+  
   dut1 : sclk_data_acq
-    port map (clk  => clk,
-              SCLK => SCLK,
+    port map (sysc => sysc,
+              sclk => SCLK,
               a_in => a_in,
               b_in => b_in,
               a    => a,
