@@ -11,7 +11,7 @@ entity data_bridge is
     -- Strobe clock from physical pin on board
     STROBE : in  std_logic;
     -- Write instruction
-    wr_en  : out std_logic;
+    wr_en  : out std_logic := '0';
     -- Data Input
     a, b   : in  std_logic_vector (7 downto 0);
     -- Data Output
@@ -21,17 +21,18 @@ end;
 
 architecture RTU of data_bridge is
   -- Previous state of the STROBE pin according to the clk
-  signal previous_STROBE : std_logic := STROBE;
+  -- Start high so wr_en doesn't accidentally get raised
+  signal previous_STROBE : std_logic := '1';
 begin
   strobe_emit : process(clk)
   begin
     if (rising_edge(clk)) then
-      if (STROBE /= previous_STROBE) then  -- If change in STROBE value
-        wr_en           <= '1';            -- Pulse a read instruction
-        previous_STROBE <= STROBE;
+      if (STROBE /= previous_STROBE and STROBE='1') then       -- If rising edge on strobe
+        wr_en           <= '1'; -- Pulse a read instruction
       else
         wr_en <= '0';
       end if;
+      previous_STROBE <= STROBE;
     end if;
   end process strobe_emit;
   dout <= a & b;
