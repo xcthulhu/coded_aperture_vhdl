@@ -2,6 +2,7 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
+
 use work.common_decs.all;
 
 entity wb_fifo is
@@ -45,10 +46,10 @@ architecture RTL of wb_fifo is
   signal data_count                 : std_logic_vector(addrdepth-1 downto 0);
   signal rd_en, empty, full, wr_ack : std_logic;
   signal half, previous_half        : std_logic := '0';
-  signal addr                       : std_logic;
+  signal addr                       : std_logic_vector(1 downto 0);
   signal readdata                   : std_logic_vector(chan_size-1 downto 0);
 begin
-  addr <= wbw.address(wbw.address'low);
+  addr <= wbw.address(1 downto 0);
   half <= data_count(data_count'high);
 
   fifo : fifo_syn
@@ -79,12 +80,18 @@ begin
       end if;
       if (check_wb0(wbw)) then
         case addr is
-          when '0' =>
+          when "10" =>  -- Read data
             rd_en    <= '1';
             readdata <= dout;
-          when '1' =>
+          when "01" =>  -- Report whether empty
+            rd_en    <= '0';
+            readdata <= (readdata'low => empty, others => '0');  
+          when "00" =>  -- ID
             rd_en    <= '0';
             readdata <= id;
+          when "11" =>  -- ID
+            rd_en    <= '0';
+            readdata <= (others => '0');
           when others => null;
         end case;
       else
@@ -93,6 +100,6 @@ begin
       previous_half <= half;
     end if;
   end process;
-  wbr.ack      <= wbw.cycle;
+  wbr.ack      <= wbw.cycle; -- Always put an ack or you hang the bus
   wbr.readdata <= readdata;
 end architecture;
