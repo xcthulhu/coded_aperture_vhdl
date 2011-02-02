@@ -17,7 +17,7 @@ entity wb_fifo_chain is
       SCLK       : in  std_logic;
       STROBE     : in  std_logic;
       -- IRQ System
-      irqport    : out std_logic;
+      irqport    : out irq_port;
       -- Wishbone Interaction system
       wbw        : in  wbws;
       wbr        : out wbrs
@@ -33,8 +33,8 @@ architecture RTL of wb_fifo_chain is
       (
         sysc    : in  syscon;
         wr_en   : in  std_logic;
-        din     : in  std_logic_vector(chan_size-1 downto 0);
-        irqport : out std_logic;
+        din     : in  read_chan;
+        irqport : out irq_port;
         wbw     : in  wbws;
         wbr     : out wbrs
         );
@@ -46,7 +46,7 @@ architecture RTL of wb_fifo_chain is
       STROBE : in  std_logic;
       a, b   : in  std_logic_vector(7 downto 0);
       wr_en  : out std_logic := '0';
-      dout   : out std_logic_vector(15 downto 0)
+      dout   : out read_chan
       );
   end component;
 
@@ -59,9 +59,9 @@ architecture RTL of wb_fifo_chain is
   end component;
 
   -- Signals
-  ---- Data vectors
+  ---- Data vectorss
   signal a, b       : std_logic_vector (7 downto 0);
-  signal bridge_out : std_logic_vector(chan_size-1 downto 0);
+  signal bridge_out : read_chan;
   ---- Write Instruction for FIFO
   signal wr_en      : std_logic;
 

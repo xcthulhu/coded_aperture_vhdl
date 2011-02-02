@@ -14,7 +14,7 @@ entity data_bridge is
     -- Data Input
     a, b   : in  std_logic_vector (7 downto 0);
     -- Data Output
-    dout   : out std_logic_vector (chan_size-1 downto 0)
+    dout   : out read_chan
     );
 end;
 

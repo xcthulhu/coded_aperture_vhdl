@@ -14,11 +14,11 @@ entity wb_fifo is
     (
       sysc    : in  syscon;
       -- Data Input
-      din     : in  std_logic_vector(chan_size-1 downto 0);
+      din     : in  read_chan;
       -- Write Instruction bit
       wr_en   : in  std_logic;
       -- IRQ System
-      irqport : out std_logic;
+      irqport : out irq_port;
       -- Wishbone Interaction system
       wbw     : in  wbws;
       wbr     : out wbrs
@@ -40,13 +40,13 @@ architecture RTL of wb_fifo is
       empty, full, wr_ack : out std_logic);
   end component;
 
-  signal dout       : std_logic_vector(chan_size-1 downto 0);
+  signal dout       : read_chan;
   signal data_count : std_logic_vector(addrdepth-1 downto 0);
   signal rd_en, empty,
     full, wr_ack : std_logic;
   signal half     : std_logic;
   signal addr     : std_logic_vector(1 downto 0);
-  signal readdata : std_logic_vector(chan_size-1 downto 0);
+  signal readdata : read_chan;
 begin
   addr <= wbw.address(1 downto 0);
   half <= data_count(data_count'high);
@@ -74,9 +74,9 @@ begin
   begin
     if(rising_edge(sysc.clk)) then
       if (half /= previous_half and half = '1') then
-        irqport <= '1';
+        irqport <= (0 => '1', others => '0');
       else
-        irqport <= '0';
+        irqport <= (others => '0');
       end if;
       if (check_wb0(wbw)) then
         case addr is

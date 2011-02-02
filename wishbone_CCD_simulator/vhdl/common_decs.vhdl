@@ -6,7 +6,11 @@ package common_decs is
   
   constant chan_size : integer := 16;   -- Size of data channel
   subtype device_id is std_logic_vector(chan_size-1 downto 0);
-
+  subtype irq_port is std_logic_vector(chan_size-1 downto 0);
+  subtype read_chan is std_logic_vector(chan_size-1 downto 0);
+  subtype write_chan is std_logic_vector(chan_size-1 downto 0);
+  subtype imx_chan is std_logic_vector(chan_size-1 downto 0);
+  
   -- Syscon
   type syscon is
   record
@@ -17,7 +21,7 @@ package common_decs is
   -- Wishbone Interface Signals
   type wbrs is                           -- Wishbone read system
   record
-    readdata : std_logic_vector (chan_size-1 downto 0);  -- Data bus read by wishbone
+    readdata : read_chan;  -- Data bus read by wishbone
     ack      : std_logic;               -- Acknowledge
   end record;
 
@@ -27,7 +31,7 @@ package common_decs is
     writing   : std_logic;              -- Busy writing
     cycle     : std_logic;              -- Bus cycle in progress
     address   : std_logic_vector (12 downto 0);           -- Address bus
-    writedata : std_logic_vector (chan_size-1 downto 0);  -- Data bus written by wishbone
+    writedata : write_chan;  -- Data bus written by wishbone
   end record;
 
   -- Methods for checking for access to the wishbone bus

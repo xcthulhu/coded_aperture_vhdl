@@ -23,7 +23,7 @@ entity wishbone_wrapper is
       -- Global Signals
       sysc : in syscon;
       -- i.MX Signals
-      imx_data : inout std_logic_vector(chan_size-1 downto 0);
+      imx_data : inout imx_chan;
       imx      : in    imx_in;
       -- Wishbone interface signals
       wbr      : in    wbrs;
@@ -36,7 +36,7 @@ architecture RTL of wishbone_wrapper is
   signal writing   : std_logic;
   signal readf     : std_logic;
   signal strobe    : std_logic;
-  signal writedata : std_logic_vector(chan_size-1 downto 0);
+  signal writedata : write_chan;
   signal address   : std_logic_vector(12 downto 0);
 begin
 
@@ -68,4 +68,4 @@ begin
 
   imx_data <= wbr.readdata when (readf = '1') else (others => 'Z');
 
-end architecture RTL;
+end architecture;

@@ -21,7 +21,7 @@ top_module=top_mod
 vendor=xilinx
 family=spartan3s
 part=xc3s200a-4ft256
-files=common_decs.vhdl intercon_decs.vhdl data_bridge.vhdl fifo.vhdl wb_fifo.vhdl sclk_data_acq.vhdl irq_mngr.vhdl wishbone_wrapper.vhdl intercon.vhdl rstgen_syscon.vhdl top_mod.vhdl
+files=common_decs.vhdl intercon_decs.vhdl data_bridge.vhdl fifo.vhdl wb_fifo.vhdl sclk_data_acq.vhdl wb_fifo_chain.vhdl irq_mngr.vhdl wishbone_wrapper.vhdl intercon.vhdl rstgen_syscon.vhdl top_mod.vhdl
 include $(DEVEL_BASE)/xilinx.mk
 
 # Install the bitmap on the armadeus, by loading into the FPGA

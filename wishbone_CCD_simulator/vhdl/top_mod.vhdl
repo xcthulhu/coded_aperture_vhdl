@@ -11,7 +11,7 @@ entity top_mod is
       -- Interupt
       irq        : out   std_logic;
       -- Armadeus handshaking
-      imx_data   : inout std_logic_vector(15 downto 0);
+      imx_data   : inout imx_chan;
       imx        : in    imx_in;
       -- External pins
       a_in, b_in : in    std_logic;
@@ -34,7 +34,7 @@ architecture RTL of top_mod is
   component wishbone_wrapper
     port (
       sysc     : in    syscon;
-      imx_data : inout std_logic_vector(chan_size-1 downto 0);
+      imx_data : inout imx_chan;
       imx      : in    imx_in;
       wbr      : in    wbrs;
       wbw      : out   wbws
@@ -50,7 +50,7 @@ architecture RTL of top_mod is
       sysc    : in  syscon;
       wbw     : in  wbws;
       wbr     : out wbrs;
-      irqport : in  std_logic;
+      irqport : in  irq_port;
       irq     : out std_logic
       );
   end component;
@@ -74,14 +74,14 @@ architecture RTL of top_mod is
         sysc         : in  syscon;
         a_in, b_in,
         SCLK, STROBE : in  std_logic;
-        irqport      : out std_logic;
+        irqport      : out irq_port;
         wbw          : in  wbws;
         wbr          : out wbrs
         );
   end component;
 
   -- IRQ communication
-  signal irqport : std_logic;
+  signal irqport : irq_port;
 
   ---- Intercon
   signal sysc, irq_sysc, fifo_sysc, wsysc : syscon;
