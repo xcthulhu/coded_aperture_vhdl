@@ -1,6 +1,6 @@
-OBJS = common_decs.o ../vhdl/common_decs.o ../vhdl/sclk_data_acq.o ../vhdl/data_bridge.o ../vhdl/fifo.o #../vhdl/intercon_decs.o wb_fifo.o irq_mngr.o wishbone_wrapper.o intercon.o rstgen_syscon.o top_mod.o
-PROGS = clocksim i_tb ii_tb iii_tb
-SIMS = clocksim.dat i_tb.vcd ii_tb.vcd iii_tb.vcd
+OBJS = common_decs.o ../vhdl/common_decs.o ../vhdl/sclk_data_acq.o ../vhdl/data_bridge.o ../vhdl/fifo.o ../vhdl/rstgen_syscon.o  #../vhdl/intercon_decs.o wb_fifo.o irq_mngr.o wishbone_wrapper.o intercon.o top_mod.o
+PROGS = clocksim i_tb ii_tb iii_tb iv_tb
+SIMS = clocksim.dat i_tb.vcd ii_tb.vcd iii_tb.vcd iv_tb.vcd
 COMP=ghdl
 C_VHDL=../../c_vhdl/c-obj/
 CCD_VHDL=../vhdl/
