@@ -16,5 +16,5 @@ end package;
 
 package body intercon_decs is
   function is_slctd (my_wbw : wbws; addr : topsix) return boolean is
-  begin return(my_wbw.address(topb downto botb) = addr); end;
+  begin return(my_wbw.c.address(topb downto botb) = addr); end;
 end package body;

@@ -60,10 +60,10 @@ begin
     end if;
   end process;
 
-  wbw.address   <= address   when (strobe = '1')  else (others => '0');
-  wbw.writedata <= writedata when (writing = '1') else (others => '0');
-  wbw.strobe    <= strobe;
-  wbw.writing   <= writing;
+  wbw.c.address   <= address   when (strobe = '1')  else (others => '0');
+  wbw.c.writedata <= writedata when (writing = '1') else (others => '0');
+  wbw.c.strobe    <= strobe;
+  wbw.c.writing   <= writing;
   wbw.cycle     <= strobe;
 
   imx_data <= wbr.readdata when (readf = '1') else (others => 'Z');

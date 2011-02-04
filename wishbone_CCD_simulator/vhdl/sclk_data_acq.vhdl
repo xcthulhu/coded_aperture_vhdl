@@ -18,7 +18,7 @@ end;
 
 architecture RTL of sclk_data_acq is
   -- Output values
-  signal a_val, b_val : std_logic_vector(7 downto 0) := (others => '0');
+  signal a_val, b_val : std_logic_vector(7 downto 0);
 begin
   sclk_emit : process(sysc.clk, sysc.reset)
     -- Previous state of the SCLK pin according to the clk

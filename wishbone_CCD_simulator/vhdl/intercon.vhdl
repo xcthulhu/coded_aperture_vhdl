@@ -37,8 +37,8 @@ begin
   wsysc     <= sysc;
 
 -- Most data signals to slaves may be routed to all slaves, need no gating.
-  irq_wbw  <= wwbw;
-  fifo_wbw <= wwbw;
+  irq_wbw.c  <= wwbw.c;
+  fifo_wbw.c <= wwbw.c;
 
 -- Gate strobe to slaves.
   irq_wbw.cycle <= wwbw.cycle when is_slctd(wwbw, irqa)

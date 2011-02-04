@@ -82,11 +82,11 @@ begin
       rd_ack <= '0';
       if check_wb0(wbw) then
         rd_ack <= '1';
-        if(wbw.address = "00") then
+        if(wbw.c.address(1 downto 0) = "00") then
           readdata <= irq_mask;
-        elsif(wbw.address = "01") then
+        elsif(wbw.c.address(1 downto 0) = "01") then
           readdata <= irq_pend;
-        elsif(wbw.address = "10") then
+        elsif(wbw.c.address(1 downto 0) = "10") then
           readdata <= id;
         else
           readdata <= (others => '0');
@@ -107,10 +107,10 @@ begin
       wr_ack  <= '0';
       if check_wb1(wbw) then
         wr_ack <= '1';
-        if(wbw.address = "00") then
-          irq_mask <= wbw.writedata;
-        elsif(wbw.address = "01") then
-          irq_ack <= wbw.writedata;
+        if(wbw.c.address(1 downto 0) = "00") then
+          irq_mask <= wbw.c.writedata;
+        elsif(wbw.c.address(1 downto 0) = "01") then
+          irq_ack <= wbw.c.writedata;
         end if;
       end if;
     end if;

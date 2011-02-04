@@ -30,7 +30,7 @@ entity fifo_syn is
     ---- Status
     data_count  : out std_logic_vector(addrdepth-1 downto 0);
     empty, full : out std_logic;
-    wr_ack      : out std_logic := '0');
+    wr_ack      : out std_logic);
 end entity;
 
 architecture fifo_syn_a of fifo_syn is
@@ -39,7 +39,7 @@ architecture fifo_syn_a of fifo_syn is
   type regtype is array (0 to memdepth) of wrdtype;
   signal reg        : regtype;
 
-  signal RdCntr, WrCntr, DCntr : std_logic_vector(addrdepth-1 downto 0) := (others => '0');
+  signal RdCntr, WrCntr, DCntr : std_logic_vector(addrdepth-1 downto 0);
 
   signal RW      : std_logic_vector(1 downto 0);
   signal fullxB  : std_logic := '0';

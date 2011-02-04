@@ -10,28 +10,33 @@ package common_decs is
   subtype read_chan is std_logic_vector(chan_size-1 downto 0);
   subtype write_chan is std_logic_vector(chan_size-1 downto 0);
   subtype imx_chan is std_logic_vector(chan_size-1 downto 0);
-  
+
   -- Syscon
   type syscon is
   record
-    clk      : std_logic;               -- Clock
-    reset    : std_logic;               -- Asynchronous Reset
+    clk   : std_logic;                  -- Clock
+    reset : std_logic;                  -- Asynchronous Reset
   end record;
 
   -- Wishbone Interface Signals
-  type wbrs is                           -- Wishbone read system
+  type wbrs is                          -- Wishbone read system
   record
-    readdata : read_chan;  -- Data bus read by wishbone
+    readdata : read_chan;               -- Data bus read by wishbone
     ack      : std_logic;               -- Acknowledge
   end record;
 
-  type wbws is                           -- Wishbone write system
+  type wbws_common is        -- Common part of the wishbone write system
   record
     strobe    : std_logic;              -- Data Strobe
     writing   : std_logic;              -- Busy writing
-    cycle     : std_logic;              -- Bus cycle in progress
-    address   : std_logic_vector (12 downto 0);           -- Address bus
-    writedata : write_chan;  -- Data bus written by wishbone
+    address   : std_logic_vector (12 downto 0);  -- Address bus
+    writedata : write_chan;             -- Data bus written by wishbone    
+  end record;
+
+  type wbws is                          -- Wishbone write system
+  record
+    c     : wbws_common;
+    cycle : std_logic;                  -- Bus cycle in progress
   end record;
 
   -- Methods for checking for access to the wishbone bus
@@ -51,11 +56,11 @@ end package;
 
 package body common_decs is
   function check_wb0(wbw : wbws) return boolean is
-  begin return (wbw.strobe = '1' and wbw.cycle = '1' and wbw.writing = '0');
+  begin return (wbw.c.strobe = '1' and wbw.cycle = '1' and wbw.c.writing = '0');
   end;
 
   function check_wb1 (wbw : wbws) return boolean is
-  begin return (wbw.strobe = '1' and wbw.cycle = '1' and wbw.writing = '1');
+  begin return (wbw.c.strobe = '1' and wbw.cycle = '1' and wbw.c.writing = '1');
   end;
 
 end package body common_decs;

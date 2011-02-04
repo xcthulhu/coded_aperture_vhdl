@@ -48,7 +48,7 @@ architecture RTL of wb_fifo is
   signal addr     : std_logic_vector(1 downto 0);
   signal readdata : read_chan;
 begin
-  addr <= wbw.address(1 downto 0);
+  addr <= wbw.c.address(1 downto 0);
   half <= data_count(data_count'high);
 
   fifo : fifo_syn

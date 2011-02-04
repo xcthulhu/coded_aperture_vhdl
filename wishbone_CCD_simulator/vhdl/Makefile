@@ -1,5 +1,5 @@
 WORK = CCD
-OBJS = common_decs.o intercon_decs.o sclk_data_acq.o data_bridge.o fifo.o wb_fifo.o wb_fifo_chain.o irq_mngr.o wishbone_wrapper.o intercon.o rstgen_syscon.o top_mod.o
+OBJS = common_decs.o intercon_decs.o sclk_data_acq.o data_bridge.o fifo.o wb_fifo.o wb_fifo_chain.o irq_mngr.o wishbone_wrapper.o intercon.o rstgen_syscon.o
 BITMAP=ccd_simulator.bit
 COMP=ghdl
 VHDL_C=$(COMP) -a --work=$(WORK) --ieee=synopsys -fexplicit --warn-reserved --warn-default-binding --warn-binding --warn-library --warn-vital-generic --warn-delayed-checks --warn-body --warn-specs --warn-unused

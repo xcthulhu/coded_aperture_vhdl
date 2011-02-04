@@ -91,6 +91,7 @@ begin
   data_acq : sclk_data_acq
     port map (
       sysc => sysc,
+      SCLK => SCLK,
       a_in => a_in,
       b_in => b_in,
       a    => a,
