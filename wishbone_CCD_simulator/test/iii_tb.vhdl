@@ -67,7 +67,6 @@ architecture behav of iii_tb is
 
 begin
   sysc.clk <= clk;
-  sysc.reset <= '0';
   
   dut1 : sclk_data_acq
     port map (sysc  => sysc,
@@ -110,6 +109,13 @@ begin
     variable n                            : integer := 0;
     constant rate                         : integer := 8;
   begin
+    wait for 1 ns;
+    sysc.reset <= '0';
+    wait for 1 ns;
+    sysc.reset <= '1';
+    wait for 1 ns;
+    sysc.reset <= '0';
+    wait for 1 ns;
     while (not(feof(fin))) loop
       if (n = 0) then
         -- Get values from file
