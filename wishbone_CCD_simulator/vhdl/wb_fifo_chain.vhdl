@@ -52,9 +52,9 @@ architecture RTL of wb_fifo_chain is
 
   component sclk_data_acq is
     port (
-      sysc       : in  syscon;
-      a_in, b_in : in  std_logic;
-      a, b       : out std_logic_vector (7 downto 0)
+      sysc             : in  syscon;
+      SCLK, a_in, b_in : in  std_logic;
+      a, b             : out std_logic_vector (7 downto 0)
       );
   end component;
 
