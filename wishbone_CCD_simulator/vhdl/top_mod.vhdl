@@ -7,16 +7,19 @@ entity top_mod is
   port
     (
       -- External Clock
-      clk        : in    std_logic;
+      clk         : in    std_logic;
       -- Interupt
-      irq        : out   std_logic;
+      irq         : out   std_logic;
       -- Armadeus handshaking
-      imx_data   : inout imx_chan;
-      imx        : in    imx_in;
+      imx_data    : inout imx_chan;
+      imx_address :       std_logic_vector(11 downto 0);  -- LSB not used 
+      imx_cs_n    :       std_logic;
+      imx_oe_n    :       std_logic;
+      imx_eb3_n   :       std_logic;
       -- External pins
-      a_in, b_in : in    std_logic;
-      SCLK       : in    std_logic;
-      STROBE     : in    std_logic
+      a_in, b_in  : in    std_logic;
+      SCLK        : in    std_logic;
+      STROBE      : in    std_logic
       );
 end entity;
 
@@ -68,7 +71,9 @@ architecture RTL of top_mod is
   end component;
 
   component wb_fifo_chain is
-    generic (id : device_id := x"0523");
+    generic (id : device_id := x"0523";
+	addrdepth : integer := 9
+	);
     port
       (
         sysc         : in  syscon;
@@ -87,8 +92,13 @@ architecture RTL of top_mod is
   signal sysc, irq_sysc, fifo_sysc, wsysc : syscon;
   signal wwbr, irq_wbr, fifo_wbr          : wbrs;
   signal wwbw, irq_wbw, fifo_wbw          : wbws;
+  signal imx                              : imx_in;
   
 begin
+  imx.address <= imx_address;
+  imx.cs_n    <= imx_cs_n;
+  imx.oe_n    <= imx_oe_n;
+  imx.eb3_n   <= imx_eb3_n;
 
   rstgen00 : rstgen_syscon
     generic map (invert_reset => '0')
@@ -134,7 +144,10 @@ begin
       );
 
   wb_fifo_chain00 : wb_fifo_chain
-    generic map (id => x"0523")
+    generic map (
+	id => x"0523",
+	addrdepth => 9
+	)
     port map (
       sysc    => fifo_sysc,
       a_in    => a_in,

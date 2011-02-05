@@ -8,7 +8,8 @@ use work.common_decs.all;
 entity wb_fifo is
   generic
     (
-      id : device_id := x"0523"
+      id : device_id := x"0523";
+    addrdepth : integer := 10
       );
   port
     (
@@ -26,7 +27,6 @@ entity wb_fifo is
 end entity;
 
 architecture RTL of wb_fifo is
-  constant addrdepth : integer := 10;
   component fifo_syn is
     generic (
       width     : integer := chan_size;
@@ -78,6 +78,7 @@ begin
       else
         irqport <= (others => '0');
       end if;
+      
       if (check_wb0(wbw)) then
         case addr is
           when "10" =>                  -- Read data

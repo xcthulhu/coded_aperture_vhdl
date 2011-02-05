@@ -7,7 +7,10 @@ use IEEE.numeric_std.all;
 use work.common_decs.all;
 
 entity wb_fifo_chain is
-  generic (id : device_id := x"0523");
+  generic (
+	id : device_id := x"0523";
+	addrdepth : integer := 10
+	);
   port
     (
       -- External Clock
@@ -28,7 +31,9 @@ architecture RTL of wb_fifo_chain is
   -- Components
   component wb_fifo is
     generic
-      (id : device_id := id);
+      (id : device_id := id;
+	addrdepth : integer := 10
+ 	);
     port
       (
         sysc    : in  syscon;
@@ -68,7 +73,10 @@ architecture RTL of wb_fifo_chain is
 begin
 
   wb_fifo00 : wb_fifo
-    generic map (id => id)
+    generic map (
+	id => id,
+	addrdepth => addrdepth 
+	)
     port map (
       sysc    => sysc,
       irqport => irqport,
