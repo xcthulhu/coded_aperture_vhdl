@@ -1,2 +1,4 @@
+mask_simplified.tsv
+mask.tsv
 *.pyc
 *.pdf
