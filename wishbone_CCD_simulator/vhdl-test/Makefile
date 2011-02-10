@@ -1,14 +1,12 @@
-WORK = CCD
-OBJS = common_decs.o intercon_decs.o sclk_data_acq.o data_bridge.o fifo.o wb_fifo.o wb_fifo_chain.o irq_mngr.o wishbone_wrapper.o intercon.o rstgen_syscon.o
-BITMAP=ccd_simulator.bit
+OBJS = top_mod.o
+BITMAP=test.bit
 COMP=ghdl
-VHDL_C=$(COMP) -a --work=$(WORK) --ieee=synopsys -fexplicit --warn-reserved --warn-default-binding --warn-binding --warn-library --warn-vital-generic --warn-delayed-checks --warn-body --warn-specs --warn-unused
-VHDL_E=$(COMP) -e --work=$(WORK) 
-VHDL_R=$(COMP) -r --work=$(WORK)
+VHDL_C=$(COMP) -a --ieee=synopsys -fexplicit --warn-reserved --warn-default-binding --warn-binding --warn-library --warn-vital-generic --warn-delayed-checks --warn-body --warn-specs --warn-unused
+VHDL_E=$(COMP) -e 
+VHDL_R=$(COMP) -r 
 DEVEL_BASE=../..
 RM=rm -f
 
-#all: $(OBJS) $(PROGS) $(SIMS) $(BITMAP)
 all: $(OBJS) $(BITMAP)
 
 %.o : %.vhdl
@@ -16,12 +14,12 @@ all: $(OBJS) $(BITMAP)
 
 # Make instructions creating a bitmap from xilinx synthesis tools
 # adapted from http://www.excamera.com/sphinx/fpga-makefile.html
-project=ccd_simulator
+project=test
 top_module=top_mod
 vendor=xilinx
 family=spartan3s
 part=xc3s200a-4ft256
-files=common_decs.vhdl intercon_decs.vhdl data_bridge.vhdl fifo.vhdl wb_fifo.vhdl sclk_data_acq.vhdl wb_fifo_chain.vhdl irq_mngr.vhdl wishbone_wrapper.vhdl intercon.vhdl rstgen_syscon.vhdl top_mod.vhdl
+files=top_mod.vhdl
 include $(DEVEL_BASE)/xilinx.mk
 
 # Install the bitmap on the armadeus, by loading into the FPGA
