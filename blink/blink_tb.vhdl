@@ -8,22 +8,19 @@ entity blink_tb is end blink_tb;
 architecture behav of blink_tb is
   component Clk_div_led is
     generic (max_count : natural := 48000000);
-    port (CLK         : in  std_logic;
-          led_cathode : out std_logic;
-          led_anode   : out std_logic);
+    port (CLK : in  std_logic;
+          led : out std_logic);
   end component;
   --  Specifies which entity is bound with the component.
-  for dut            : Clk_div_led use entity work.Clk_div_led;
-  signal CLK         : std_logic;
-  signal led_cathode : std_logic;
-  signal led_anode   : std_logic;
+  for dut    : Clk_div_led use entity work.Clk_div_led;
+  signal CLK : std_logic;
+  signal led : std_logic;
 begin
   --  Component instantiation.
   --  We can only simulate a second at most, so max_count must be small
   dut : Clk_div_led generic map (max_count => 100)
-    port map (CLK         => CLK,
-              led_cathode => led_cathode,
-              led_anode   => led_anode) ;
+    port map (CLK => CLK,
+              led => led) ;
   process
     -- These control the looping we will do
     constant the_end : integer := 10000;

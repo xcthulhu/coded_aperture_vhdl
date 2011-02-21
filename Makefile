@@ -6,6 +6,7 @@ SIMS = blink_tb.vcd mask_tb.vcd
 GHDL = ghdl
 
 all: 
+	$(MAKE) -C unisim all
 	$(MAKE) -C blink all
 	$(MAKE) -C c_vhdl all
 	$(MAKE) -C mask all
@@ -16,6 +17,7 @@ armadeus:
 	$(MAKE) -C armadeus
 
 clean:
+	$(MAKE) -C unisim all
 	$(MAKE) -C blink clean
 	$(MAKE) -C mask clean
 	$(MAKE) -C c_vhdl clean
