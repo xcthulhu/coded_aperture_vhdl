@@ -8,57 +8,50 @@ entity intercon is
   port
     (
       -- Global Signals
-      clk   : in std_logic;
-      reset : in std_logic;
+      sysc : in syscon;
 
       -- IRQ signals
-      irq_wbr   : in  wbr;
-      irq_wbw   : out wbw;
-      irq_clk   : out std_logic;
-      irq_reset : out std_logic;
+      irq_wbr  : in  wbrs;
+      irq_wbw  : out wbws;
+      irq_sysc : out syscon;
 
       -- FIFO signals
-      fifo_wbr   : in  wbr;
-      fifo_wbw   : out wbw;
-      fifo_clk   : out std_logic;
-      fifo_reset : out std_logic;
+      fifo_wbr  : in  wbrs;
+      fifo_wbw  : out wbws;
+      fifo_sysc : out syscon;
 
       -- Wishbone Wrapper
       ---- These are what we are multiplexing
-      gwbr          : out wbr;
-      gwbw          : in  wbw;
-      wrapper_clk   : out std_logic;
-      wrapper_reset : out std_logic
+      wwbr  : out wbrs;
+      wwbw  : in  wbws;
+      wsysc : out syscon
       );
 end entity intercon;
 
 architecture RTL of intercon is
-  signal dead : wbr;
+  signal dead : wbrs;
 begin
 -- Clock and reset distribution. Maybe this doesn't belong here.
-  wrapper_clk   <= clk;
-  irq_clk       <= clk;
-  fifo_clk      <= clk;
-  wrapper_reset <= reset;
-  irq_reset     <= reset;
-  fifo_reset    <= reset;
+  irq_sysc  <= sysc;
+  fifo_sysc <= sysc;
+  wsysc     <= sysc;
 
 -- Most data signals to slaves may be routed to all slaves, need no gating.
-  irq_wbw  <= gwbw;
-  fifo_wbw <= gwbw;
+  irq_wbw.c  <= wwbw.c;
+  fifo_wbw.c <= wwbw.c;
 
 -- Gate strobe to slaves.
-  irq_wbw.cycle <= gwbw.cycle when is_slctd(gwbw, irqa)
+  irq_wbw.cycle <= wwbw.cycle when is_slctd(wwbw, irqa)
                    else '0';
-  fifo_wbw.cycle <= gwbw.cycle when is_slctd(gwbw, fifoa)
+  fifo_wbw.cycle <= wwbw.cycle when is_slctd(wwbw, fifoa)
                     else '0';
 
 -- Multiplex data and ack from slaves.
 -- Respond with 0xdead if no slave selected.
-  dead.ack      <= gwbw.cycle;
+  dead.ack      <= wwbw.cycle;
   dead.readdata <= x"DEAD";
-  gwbr          <= irq_wbr when is_slctd(gwbw, irqa)
-                   else fifo_wbr when is_slctd(gwbw, fifoa)
+  wwbr          <= irq_wbr when is_slctd(wwbw, irqa)
+                   else fifo_wbr when is_slctd(wwbw, fifoa)
                    else dead;
 
 end architecture;

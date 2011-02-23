@@ -11,10 +11,10 @@ package intercon_decs is
   constant fifoa : topsix  := "000001";
 
   -- Checks the wishbone bus to see if an address is selected
-  function is_slctd (my_wbw : wbw; addr : topsix) return boolean;
+  function is_slctd (my_wbw : wbws; addr : topsix) return boolean;
 end package;
 
 package body intercon_decs is
-  function is_slctd (my_wbw : wbw; addr : topsix) return boolean is
-  begin return(my_wbw.address(topb downto botb) = addr); end;
+  function is_slctd (my_wbw : wbws; addr : topsix) return boolean is
+  begin return(my_wbw.c.address(topb downto botb) = addr); end;
 end package body;

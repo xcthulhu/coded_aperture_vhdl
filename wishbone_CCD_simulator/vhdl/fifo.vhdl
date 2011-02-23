@@ -26,10 +26,11 @@ entity fifo_syn is
 
     -- Outputs
     ---- Data
-    dout                : out std_logic_vector(width-1 downto 0);
+    dout        : out std_logic_vector(width-1 downto 0);
     ---- Status
-    data_count          : out std_logic_vector(addrdepth-1 downto 0);
-    empty, full, wr_ack : out std_logic);
+    data_count  : out std_logic_vector(addrdepth-1 downto 0);
+    empty, full : out std_logic;
+    wr_ack      : out std_logic);
 end entity;
 
 architecture fifo_syn_a of fifo_syn is
@@ -38,19 +39,17 @@ architecture fifo_syn_a of fifo_syn is
   type regtype is array (0 to memdepth) of wrdtype;
   signal reg        : regtype;
 
-  signal RdCntr : std_logic_vector(addrdepth-1 downto 0);
-  signal WrCntr : std_logic_vector(addrdepth-1 downto 0);
-  signal DCntr  : std_logic_vector(addrdepth-1 downto 0);
+  signal RdCntr, WrCntr, DCntr : std_logic_vector(addrdepth-1 downto 0);
 
   signal RW      : std_logic_vector(1 downto 0);
-  signal fullxB  : std_logic;
-  signal emptyxB : std_logic;
+  signal fullxB  : std_logic := '0';
+  signal emptyxB : std_logic := '1';
 begin
   RW <= rd_en & wr_en;
 
   seq : process (clk, reset)
   begin  -- process seq
-    if reset = '0' then                 -- asynchronous reset (active low)
+    if reset = '1' then                 -- asynchronous reset (active low)
       RdCntr  <= (others => '0');
       WrCntr  <= (others => '0');
       Dcntr   <= (others => '0');
@@ -77,7 +76,7 @@ begin
           wr_ack <= '0';
 
         when "01" =>                    -- only write
-          emptyxB <= '1';
+          emptyxB <= '0';
           if fullxB = '0' then          -- not full
             reg(conv_integer(WrCntr)) <= din;
             if WrCntr+1 = RdCntr then

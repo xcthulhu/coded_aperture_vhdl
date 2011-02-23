@@ -2,32 +2,31 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
+
 use work.common_decs.all;
 
 entity wb_fifo is
   generic
     (
-      id : device_id := x"0523"
+      id : device_id := x"0523";
+    addrdepth : integer := 10
       );
   port
     (
-      -- Global Signals
-      clk     : in  std_logic;
-      reset   : in  std_logic;
+      sysc    : in  syscon;
       -- Data Input
-      din     : in  std_logic_vector(chan_size-1 downto 0);
+      din     : in  read_chan;
       -- Write Instruction bit
       wr_en   : in  std_logic;
       -- IRQ System
-      irqport : out std_logic;
+      irqport : out irq_port;
       -- Wishbone Interaction system
-      wbw     : in  wbw;
-      wbr     : out wbr
+      wbw     : in  wbws;
+      wbr     : out wbrs
       );
 end entity;
 
 architecture RTL of wb_fifo is
-  constant addrdepth : integer := 10;
   component fifo_syn is
     generic (
       width     : integer := chan_size;
@@ -41,14 +40,15 @@ architecture RTL of wb_fifo is
       empty, full, wr_ack : out std_logic);
   end component;
 
-  signal dout                       : std_logic_vector(chan_size-1 downto 0);
-  signal data_count                 : std_logic_vector(addrdepth-1 downto 0);
-  signal rd_en, empty, full, wr_ack : std_logic;
-  signal half, previous_half        : std_logic := '0';
-  signal addr                       : std_logic;
-  signal readdata                   : std_logic_vector(chan_size-1 downto 0);
+  signal dout       : read_chan;
+  signal data_count : std_logic_vector(addrdepth-1 downto 0);
+  signal rd_en, empty,
+    full, wr_ack : std_logic;
+  signal half     : std_logic;
+  signal addr     : std_logic_vector(1 downto 0);
+  signal readdata : read_chan;
 begin
-  addr <= wbw.address(wbw.address'low);
+  addr <= wbw.c.address(1 downto 0);
   half <= data_count(data_count'high);
 
   fifo : fifo_syn
@@ -56,8 +56,8 @@ begin
                  addrdepth => addrdepth)
     port map (
       -- External Signals
-      clk        => clk,
-      reset      => reset,
+      clk        => sysc.clk,
+      reset      => sysc.reset,
       din        => din,
       rd_en      => rd_en,
       -- Internal signals
@@ -69,30 +69,38 @@ begin
       wr_ack     => wr_ack
       );
 
-  process (clk)
+  process (sysc.clk)
+    variable previous_half : std_logic := '1';
   begin
-    if(rising_edge(clk)) then
+    if(rising_edge(sysc.clk)) then
       if (half /= previous_half and half = '1') then
-        irqport <= '1';
+        irqport <= (0 => '1', others => '0');
       else
-        irqport <= '0';
+        irqport <= (others => '0');
       end if;
+      
       if (check_wb0(wbw)) then
         case addr is
-          when '0' =>
+          when "10" =>                  -- Read data
             rd_en    <= '1';
             readdata <= dout;
-          when '1' =>
+          when "01" =>                  -- Report whether empty
+            rd_en    <= '0';
+            readdata <= (readdata'low => empty, others => '0');
+          when "00" =>                  -- ID
             rd_en    <= '0';
             readdata <= id;
+          when "11" =>                  -- ID
+            rd_en    <= '0';
+            readdata <= (others => '0');
           when others => null;
         end case;
       else
         rd_en <= '0';
       end if;
-      previous_half <= half;
+      previous_half := half;
     end if;
   end process;
-  wbr.ack      <= wbw.cycle;
+  wbr.ack      <= wbw.cycle;  -- Always put an ack or you hang the bus
   wbr.readdata <= readdata;
 end architecture;

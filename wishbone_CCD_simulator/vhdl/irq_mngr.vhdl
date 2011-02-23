@@ -10,17 +10,12 @@
 --
 --  Description   :  This is the top file of the IP
 -------------------------------------------------------------------------------
---  Modifications :
---  20/10/2008 : Detected rising edge instead of high state
---  Fabien Marteau <fabien.marteau@armadeus.com>
---
--------------------------------------------------------------------------------
+
 
 library IEEE;
 use IEEE.std_logic_1164.all;
+use IEEE.std_logic_signed.all;
 use IEEE.numeric_std.all;
-use IEEE.std_logic_arith.all;
-
 use work.common_decs.all;
 
 entity irq_mngr is
@@ -31,19 +26,14 @@ entity irq_mngr is
       );
   port
     (
-      -- Global Signals
-      clk   : in std_logic;
-      reset : in std_logic;
-
-      -- Wishbone interface signals
-      wbr : out wbr;
-      wbw : in  wbw;
-
-      -- irq from other IP
-      irqport : in std_logic;
-
       -- Component external signals
-      irq : out std_logic               -- IRQ request
+      sysc    : in  syscon;
+      irq     : out std_logic;          -- IRQ request
+      -- Wishbone interface signals
+      wbw     : in  wbws;
+      wbr     : out wbrs;
+      -- irq from other IP
+      irqport : in  irq_port
       );
 end entity;
 
@@ -51,97 +41,88 @@ end entity;
 architecture RTL of irq_mngr is
 -- ----------------------------------------------------------------------------
 
-  signal irq_r    : std_logic;
-  signal irq_old  : std_logic;
-  signal irq_pend : std_logic;
-  signal irq_ack  : std_logic;
-  signal irq_mask : std_logic;
-  signal readdata : std_logic_vector (15 downto 0);
+  signal irq_r, irq_old, irq_pend, irq_ack, irq_mask : irq_port;
+  signal readdata : read_chan;
   signal rd_ack   : std_logic;
   signal wr_ack   : std_logic;
-  signal addr     : std_logic_vector (1 downto 0);
 
+  constant asize : natural := minimum(irq_port_size,chan_size);
 begin
 
-  addr <= wbw.address(1 downto 0);
-
--- ----------------------------------------------------------------------------
 --  External signals synchronization process
--- ----------------------------------------------------------------------------
-  process(clk, reset)
+  process(sysc.clk, sysc.reset)
   begin
-    if(reset = '1') then
-      irq_r   <= '0';
-      irq_old <= '0';
-    elsif(rising_edge(clk)) then
+    if(sysc.reset = '1') then
+      irq_r   <= (others => '0');
+      irq_old <= (others => '0');
+    elsif(rising_edge(sysc.clk)) then
       irq_r   <= irqport;
       irq_old <= irq_r;
     end if;
   end process;
 
--- ----------------------------------------------------------------------------
+
 --  Interruption requests latching process on rising edge
--- ----------------------------------------------------------------------------
-  process(clk, reset)
+  process(sysc.clk, sysc.reset)
   begin
-    if(reset = '1') then
-      irq_pend <= '0';
-    elsif(rising_edge(clk)) then
-      irq_pend <= (not irq_ack) and (irq_pend or (irq_r and (not irq_old) and irq_mask));
+    if(sysc.reset = '1') then
+      irq_pend <= (others => '0');
+    elsif(rising_edge(sysc.clk)) then
+      irq_pend <= (irq_pend or ((irq_r and (not irq_old)) and irq_mask)) and (not irq_ack);
     end if;
   end process;
 
--- ----------------------------------------------------------------------------
+
 --  Register reading process
--- ----------------------------------------------------------------------------
-  process(clk, reset)
+  process(sysc.clk, sysc.reset)
   begin
-    if(reset = '1') then
+    if(sysc.reset = '1') then
       rd_ack   <= '0';
       readdata <= (others => '0');
-    elsif (rising_edge(clk)) then
+    elsif(rising_edge(sysc.clk)) then
       rd_ack <= '0';
       if check_wb0(wbw) then
         rd_ack <= '1';
-        case addr is
-          when "00"   => readdata <= (0 => irq_mask, others => '0');
-          when "01"   => readdata <= (0 => irq_pend, others => '0');
-          when "10"   => readdata    <= ext(id, readdata'length);
-          when "11"   => readdata    <= (others => '0');
-          when others => null;
-        end case;
-      else
-        readdata <= (others => '0');
+        if(wbw.c.address(1 downto 0) = "00") then
+          readdata(asize-1 downto 0)
+            <= irq_mask(asize-1 downto 0);
+        elsif(wbw.c.address(1 downto 0) = "01") then
+          readdata(asize-1 downto 0)
+            <= irq_pend(asize-1 downto 0);
+        elsif(wbw.c.address(1 downto 0) = "10") then
+          readdata <= id;
+        else
+          readdata <= (others => '0');
+        end if;
       end if;
     end if;
   end process;
 
--- ----------------------------------------------------------------------------
 --  Register update process
--- ----------------------------------------------------------------------------
-  process(clk, reset)
+  process(sysc.clk, sysc.reset)
   begin
-    if (reset = '1') then
-      irq_ack  <= '0';
+    if(sysc.reset = '1') then
+      irq_ack  <= (others => '0');
       wr_ack   <= '0';
-      irq_mask <= '0';
-    elsif (rising_edge(clk)) then
-      irq_ack <= '0';
+      irq_mask <= (others => '0');
+    elsif(rising_edge(sysc.clk)) then
+      irq_ack <= (others => '0');
       wr_ack  <= '0';
       if check_wb1(wbw) then
         wr_ack <= '1';
-        case addr is
-          when "00"   => irq_mask <= wbw.writedata(0);
-          when "01"   => irq_ack  <= wbw.writedata(0);
-          when others => null;
-        end case;
+        if(wbw.c.address(1 downto 0) = "00") then
+          irq_mask <= wbw.c.writedata(irq_port_size-1 downto 0);
+        elsif(wbw.c.address(1 downto 0) = "01") then
+          irq_ack <= wbw.c.writedata(irq_port_size-1 downto 0);
+        end if;
       end if;
     end if;
   end process;
 
-  irq <= irq_level when (irq_pend /= '0' and reset = '0') else not irq_level;
-
+  irq <= irq_level when(conv_integer(irq_pend) /= 0 and sysc.reset = '0')
+         else not irq_level;
   wbr.ack      <= rd_ack or wr_ack;
-  wbr.readdata <= readdata;
+  wbr.readdata <= readdata when check_wb0(wbw)
+                  else (others => '0');
 
 end architecture RTL;
