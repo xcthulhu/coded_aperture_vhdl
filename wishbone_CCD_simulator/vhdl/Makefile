@@ -1,15 +1,15 @@
 WORK = CCD
 OBJS = common_decs.o intercon_decs.o sclk_data_acq.o data_bridge.o fifo.o wb_fifo.o wb_fifo_chain.o irq_mngr.o wishbone_wrapper.o intercon.o rstgen_syscon.o
 BITMAP=ccd_simulator.bit
+DEVEL_BASE=../../
 
 # Read the following document for details about using the Xilinx unisim library and ghdl
 # http://www.dossmatik.de/ghdl/ghdl_unisim_eng.pdf
-UNISIM_VHDL=../../unisim
+UNISIM_VHDL=$(DEVEL_BASE)/unisim
 UNISIM=$(UNISIM_VHDL)/unisim-obj93.cf
 
 COMP=ghdl
 VHDL_C=$(COMP) -a -g --work=$(WORK) --ieee=synopsys -fexplicit --warn-reserved --warn-default-binding --warn-binding --warn-library --warn-vital-generic --warn-delayed-checks --warn-body --warn-specs --warn-unused
-DEVEL_BASE=../..
 RM=rm -f
 
 all: $(OBJS) $(BITMAP)
