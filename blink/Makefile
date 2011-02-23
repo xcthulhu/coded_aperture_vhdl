@@ -3,8 +3,13 @@ PROGS = blink_tb
 SIMS = blink_tb.vcd
 BITMAP=blink.bit
 COMP=ghdl
-VHDL_C=$(COMP) -a 
-VHDL_E=$(COMP) -e
+VHDL_C=$(COMP) -i 
+
+# Read the following document for details about using the Xilinx unisim library and ghdl
+# http://www.dossmatik.de/ghdl/ghdl_unisim_eng.pdf
+UNISIM=../unisim/unisim-obj93.cf
+VHDL_E=$(COMP) -m -g -P../unisim --warn-unused --ieee=synopsys 
+
 VHDL_R=$(COMP) -r
 DEVEL_BASE=..
 RM=rm -f
@@ -12,7 +17,10 @@ RMDIR=rm -rf
 
 all: $(OBJS) $(PROGS) $(SIMS) $(BITMAP)
 
-%.o : %.vhdl
+$(UNISIM) : 
+	$(MAKE) -C ../unisim all
+
+%.o : %.vhdl $(UNISIM)
 	$(VHDL_C) $< 
 
 blink_tb : blink_tb.vhdl blink.o
@@ -39,5 +47,3 @@ install : install_bitmap
 clean :
 	# Clean GHDL products
 	$(RM) *.o *.cf $(PROGS) *.vcd
-	$(RM) -r work
-	$(RM) *~

@@ -1,0 +1,2 @@
+clocksim: A C program that generates simulated data for testing
+I_tb: A testbench for the sclk_data_acq VHDL module

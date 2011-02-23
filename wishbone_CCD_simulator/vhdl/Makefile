@@ -1,27 +1,24 @@
-OBJS = common_decs.o data_bridge.o fifo.o sclk_data_acq.o irq_mngr.o wishbone_wrapper.o rstgen_syscon.o top_mod.o
-PROGS = data_bridge_tb
-SIMS = data_bridge_tb.vcd
-BITMAP=blink.bit
+WORK = CCD
+OBJS = common_decs.o intercon_decs.o sclk_data_acq.o data_bridge.o fifo.o wb_fifo.o wb_fifo_chain.o irq_mngr.o wishbone_wrapper.o intercon.o rstgen_syscon.o
+BITMAP=ccd_simulator.bit
+
+# Read the following document for details about using the Xilinx unisim library and ghdl
+# http://www.dossmatik.de/ghdl/ghdl_unisim_eng.pdf
+UNISIM_VHDL=../../unisim
+UNISIM=$(UNISIM_VHDL)/unisim-obj93.cf
+
 COMP=ghdl
-VHDL_C=$(COMP) -a --ieee=synopsys -fexplicit
-VHDL_E=$(COMP) -e
-VHDL_R=$(COMP) -r
+VHDL_C=$(COMP) -a -g --work=$(WORK) --ieee=synopsys -fexplicit --warn-reserved --warn-default-binding --warn-binding --warn-library --warn-vital-generic --warn-delayed-checks --warn-body --warn-specs --warn-unused
 DEVEL_BASE=../..
 RM=rm -f
-RMDIR=rm -rf
 
-#all: $(OBJS) $(PROGS) $(SIMS) $(BITMAP)
-all: $(OBJS) $(PROGS) $(SIMS)
+all: $(OBJS) $(BITMAP)
 
-%.o : %.vhdl
+$(UNISIM) : 
+	$(MAKE) -C $(UNISIM_VHDL) all
+
+%.o : %.vhdl $(UNISIM)
 	$(VHDL_C) $< 
-
-%_tb : %_tb.vhdl %.o
-	$(VHDL_C) $<
-	$(VHDL_E) $@
-
-%_tb.vcd : %_tb
-	$(VHDL_R) $< --vcd=$@
 
 # Make instructions creating a bitmap from xilinx synthesis tools
 # adapted from http://www.excamera.com/sphinx/fpga-makefile.html
@@ -30,7 +27,7 @@ top_module=top_mod
 vendor=xilinx
 family=spartan3s
 part=xc3s200a-4ft256
-files=top_mod.vhdl
+files=common_decs.vhdl intercon_decs.vhdl data_bridge.vhdl fifo.vhdl wb_fifo.vhdl sclk_data_acq.vhdl wb_fifo_chain.vhdl irq_mngr.vhdl wishbone_wrapper.vhdl intercon.vhdl rstgen_syscon.vhdl top_mod.vhdl
 include $(DEVEL_BASE)/xilinx.mk
 
 # Install the bitmap on the armadeus, by loading into the FPGA
@@ -39,6 +36,4 @@ install : install_bitmap
 
 clean :
 	# Clean GHDL products
-	$(RM) *.o *.cf $(PROGS) *.vcd
-	$(RM) -r work
-	$(RM) *~
+	$(RM) $(OBJS) *.cf

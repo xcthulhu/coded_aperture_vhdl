@@ -31,9 +31,9 @@ void step()
 		int b = ((state & BitB( bit )) !=0 );
 		int strobe = 1;
 		
-		printf("0\t%d\t%d\t%d\n", a, b, strobe);
+		printf("0 %d %d %d\n", a, b, strobe);
 		if( bit == 0 ) strobe = 0;
-		printf("1\t%d\t%d\t%d\n", a, b, strobe);
+		printf("1 %d %d %d\n", a, b, strobe);
 	}
 }
 
@@ -114,7 +114,7 @@ void readout()
 
 int main()
 {
-	printf( "# SCLK\tSEQA\tSEQB\tSTROBE\n" );
+	printf( "#SCLK SEQA SEQB STROBE\n" );
 	frame();
 //	readout();
 	return 0;
