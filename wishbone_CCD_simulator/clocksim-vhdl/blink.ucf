@@ -1,0 +1,9 @@
+# Clock at 100MHz
+NET "Clk" LOC = "N9"; # CLK0
+NET "Clk" TNM_NET = "Clk";
+TIMESPEC "TS_Clk" = PERIOD "Clk" 10 ns HIGH 50 %;
+# Outputs
+#NET "cathode" LOC="C13"  | IOSTANDARD=BLVDS_25; # IO_L01N_0
+#NET "anode" LOC="D13"  | IOSTANDARD=BLVDS_25; # IO_L01P_0
+NET "cathode" LOC="C13"  | IOSTANDARD="LVDS_25"; # IO_L01N_0
+NET "anode" LOC="D13"  | IOSTANDARD="LVDS_25"; # IO_L01P_0
