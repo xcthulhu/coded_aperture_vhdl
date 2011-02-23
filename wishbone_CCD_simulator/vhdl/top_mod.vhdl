@@ -3,6 +3,9 @@ use IEEE.STD_LOGIC_1164.all;
 use IEEE.numeric_std.all;
 use work.common_decs.all;
 
+library unisim;
+use unisim.Vcomponents.all;
+
 entity top_mod is
   port
     (
@@ -25,7 +28,6 @@ end entity;
 
 architecture RTL of top_mod is
   -- Components
-
   component rstgen_syscon
     generic (invert_reset : std_logic := '0');
     port (
@@ -71,9 +73,9 @@ architecture RTL of top_mod is
   end component;
 
   component wb_fifo_chain is
-    generic (id : device_id := x"0523";
-	addrdepth : integer := 9
-	);
+    generic (id        : device_id := x"0523";
+             addrdepth : integer   := 9
+             );
     port
       (
         sysc         : in  syscon;
@@ -84,6 +86,9 @@ architecture RTL of top_mod is
         wbr          : out wbrs
         );
   end component;
+
+  -- External Pins
+  signal xa_in, xb_in, xSCLK, xSTROBE : std_logic;
 
   -- IRQ communication
   signal irqport : irq_port;
@@ -99,6 +104,22 @@ begin
   imx.cs_n    <= imx_cs_n;
   imx.oe_n    <= imx_oe_n;
   imx.eb3_n   <= imx_eb3_n;
+
+  IO_L01P_0 : IBUF
+    port map (I => a_in,
+              O => xa_in);
+
+  IO_L02P_0 : IBUF
+    port map (I => b_in,
+              O => xb_in);
+
+  IO_L03P_0 : IBUF
+    port map (I => SCLK,
+              O => xSCLK);
+
+  IO_L04P_0 : IBUF
+    port map (I => STROBE,
+              O => xSTROBE);
 
   rstgen00 : rstgen_syscon
     generic map (invert_reset => '0')
@@ -145,15 +166,15 @@ begin
 
   wb_fifo_chain00 : wb_fifo_chain
     generic map (
-	id => x"0523",
-	addrdepth => 9
-	)
+      id        => x"0523",
+      addrdepth => 9
+      )
     port map (
       sysc    => fifo_sysc,
-      a_in    => a_in,
-      b_in    => b_in,
-      STROBE  => STROBE,
-      SCLK    => SCLK,
+      a_in    => xa_in,
+      b_in    => xb_in,
+      STROBE  => xSTROBE,
+      SCLK    => xSCLK,
       irqport => irqport,
       wbw     => fifo_wbw,
       wbr     => fifo_wbr

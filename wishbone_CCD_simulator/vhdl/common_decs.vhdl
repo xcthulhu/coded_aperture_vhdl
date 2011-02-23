@@ -4,12 +4,14 @@ use IEEE.numeric_std.all;
 
 package common_decs is
   
-  constant chan_size : integer := 16;   -- Size of data channel
+  constant chan_size : natural := 16;   -- Size of data channel
   subtype device_id is std_logic_vector(chan_size-1 downto 0);
-  subtype irq_port is std_logic_vector(chan_size-1 downto 0);
   subtype read_chan is std_logic_vector(chan_size-1 downto 0);
   subtype write_chan is std_logic_vector(chan_size-1 downto 0);
   subtype imx_chan is std_logic_vector(chan_size-1 downto 0);
+
+  constant irq_port_size : natural := 1;  -- Size of IRQ channel
+  subtype irq_port is std_logic_vector(irq_port_size-1 downto 0);
 
   -- Syscon
   type syscon is
@@ -45,6 +47,11 @@ package common_decs is
   ---- For wbw.writing = '1'
   function check_wb1 (wbw : wbws) return boolean;
   -- i.MX Control Signals
+
+  -- Calculates minimum/maximum
+  function minimum (a, b : natural) return natural;
+  function maximum (a, b : natural) return natural;
+
   type imx_in is
   record
     address : std_logic_vector(11 downto 0);  -- LSB not used 
@@ -63,4 +70,20 @@ package body common_decs is
   begin return (wbw.c.strobe = '1' and wbw.cycle = '1' and wbw.c.writing = '1');
   end;
 
+  function minimum (a, b : natural) return natural is
+  begin
+    if (a > b) then
+      return b;
+    else return a;
+    end if;
+  end;
+
+  function maximum (a, b : natural) return natural is
+  begin
+    if (a < b) then
+      return b;
+    else return a;
+    end if;
+  end;
+  
 end package body common_decs;

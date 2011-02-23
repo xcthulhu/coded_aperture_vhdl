@@ -14,6 +14,7 @@
 
 library IEEE;
 use IEEE.std_logic_1164.all;
+use IEEE.std_logic_signed.all;
 use IEEE.numeric_std.all;
 use work.common_decs.all;
 
@@ -27,7 +28,7 @@ entity irq_mngr is
     (
       -- Component external signals
       sysc    : in  syscon;
-      irq     : out std_logic;           -- IRQ request
+      irq     : out std_logic;          -- IRQ request
       -- Wishbone interface signals
       wbw     : in  wbws;
       wbr     : out wbrs;
@@ -41,11 +42,11 @@ architecture RTL of irq_mngr is
 -- ----------------------------------------------------------------------------
 
   signal irq_r, irq_old, irq_pend, irq_ack, irq_mask : irq_port;
-
   signal readdata : read_chan;
   signal rd_ack   : std_logic;
   signal wr_ack   : std_logic;
 
+  constant asize : natural := minimum(irq_port_size,chan_size);
 begin
 
 --  External signals synchronization process
@@ -83,9 +84,11 @@ begin
       if check_wb0(wbw) then
         rd_ack <= '1';
         if(wbw.c.address(1 downto 0) = "00") then
-          readdata <= irq_mask;
+          readdata(asize-1 downto 0)
+            <= irq_mask(asize-1 downto 0);
         elsif(wbw.c.address(1 downto 0) = "01") then
-          readdata <= irq_pend;
+          readdata(asize-1 downto 0)
+            <= irq_pend(asize-1 downto 0);
         elsif(wbw.c.address(1 downto 0) = "10") then
           readdata <= id;
         else
@@ -108,15 +111,15 @@ begin
       if check_wb1(wbw) then
         wr_ack <= '1';
         if(wbw.c.address(1 downto 0) = "00") then
-          irq_mask <= wbw.c.writedata;
+          irq_mask <= wbw.c.writedata(irq_port_size-1 downto 0);
         elsif(wbw.c.address(1 downto 0) = "01") then
-          irq_ack <= wbw.c.writedata;
+          irq_ack <= wbw.c.writedata(irq_port_size-1 downto 0);
         end if;
       end if;
     end if;
   end process;
 
-  irq <= irq_level when(unsigned(irq_pend) /= 0 and sysc.reset = '0')
+  irq <= irq_level when(conv_integer(irq_pend) /= 0 and sysc.reset = '0')
          else not irq_level;
   wbr.ack      <= rd_ack or wr_ack;
   wbr.readdata <= readdata when check_wb0(wbw)

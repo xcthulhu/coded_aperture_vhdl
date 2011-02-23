@@ -38,6 +38,7 @@ NET "imx_eb3_n" LOC="P9" | IOSTANDARD=LVCMOS18; # EB0N
 NET "imx_oe_n"  LOC="R9" | IOSTANDARD=LVCMOS18; # OEN
 # interrupt from fgpa to i.MX
 NET "irq" LOC="T12"  | DRIVE=8 | IOSTANDARD=LVCMOS18; # INT
+
 # LED
 #NET "led_o" LOC="C16"    | DRIVE=12 | IOSTANDARD=LVCMOS33;    #IO_L24P_1 
 # Button
@@ -49,7 +50,7 @@ NET "irq" LOC="T12"  | DRIVE=8 | IOSTANDARD=LVCMOS18; # INT
 ## http://www.armadeus.com/_downloads/apf27/documentation/datasheet_apf27.pdf
 ## http://www.armadeus.com/_downloads/apf27Dev/documentation/DataSheet_APF27Dev.pdf
 
-### LVDS settings ###
+### CMOS33 settings ###
 NET "a_in" LOC="D13"  | IOSTANDARD=LVCMOS33; # IO_L01P_0
 NET "b_in" LOC="B15"  | IOSTANDARD=LVCMOS33; # IO_L02P_0
 NET "SCLK" LOC="C12"  | IOSTANDARD=LVCMOS33; # IO_L03P_0
@@ -60,5 +61,3 @@ NET "STROBE" LOC="A14"  | IOSTANDARD=LVCMOS33; # IO_L04P_0
 #NET "b_in" LOC="B15"  | IOSTANDARD=BLVDS_25; # IO_L02P_0
 #NET "SCLK" LOC="C12"  | IOSTANDARD=BLVDS_25; # IO_L03P_0
 #NET "STROBE" LOC="A14"  | IOSTANDARD=BLVDS_25; # IO_L04P_0
-
-
