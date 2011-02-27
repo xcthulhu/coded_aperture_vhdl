@@ -23,7 +23,7 @@
  *
  */
 
-/* #define DEBUG */
+#define DEBUG
 
 #include <linux/module.h>
 #include <linux/init.h>
@@ -190,7 +190,7 @@ static int __devinit ocore_irq_mng_probe(struct platform_device *pdev)
 	if (data != ID) {
         	printk(KERN_WARNING "For irq_mngr id:%d doesn't match with id"
 			 "read %d,\n is device present ?\n", ID, data);
-        	return -ENODEV;
+//        	return -ENODEV;
 	}
 
 	pdata = pdev->dev.platform_data;
@@ -228,6 +228,7 @@ failed_platform_init:
 static int __devexit ocore_irq_mng_remove(struct platform_device *pdev)
 {
 	unsigned int irq;
+	struct fpga_irq_mng_platform_data *pdata = pdev->dev.platform_data;
 
 	for (irq = IRQ_FPGA(0); irq < IRQ_FPGA(NB_IT); irq++) {
 		set_irq_chip(irq, NULL);
@@ -235,6 +236,11 @@ static int __devexit ocore_irq_mng_remove(struct platform_device *pdev)
 		set_irq_flags(irq, 0);
 	}
 	set_irq_chained_handler(ARMADEUS_FPGA_IRQ, NULL);
+	
+	if (pdata && pdata->exit) {
+		pdata->exit(pdev);
+	}
+
 
 	pr_debug("%s\n", __FUNCTION__);
 

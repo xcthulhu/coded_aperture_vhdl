@@ -42,7 +42,7 @@
 
 
 static struct plat_sxi_port plat_sxi_data = {
-	.name = "SXI",
+	.name = "sxi_sim",
 	.interrupt_number = SXI_IRQ,
 	.num = 0,
 	.membase = (void *)(ARMADEUS_FPGA_BASE_ADDR_VIRT + 0xc),
@@ -51,7 +51,7 @@ static struct plat_sxi_port plat_sxi_data = {
 };
 
 static struct platform_device plat_sxi_device = {
-	.name = "sxi",
+	.name = "sxi_sim",
 	.id = 0,
 	.dev = {
 		.platform_data = &plat_sxi_data

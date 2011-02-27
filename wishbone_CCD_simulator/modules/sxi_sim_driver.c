@@ -272,7 +272,7 @@ static int sxi_probe(struct platform_device *pdev)
 	/* Get the major and minor device numbers */
 	/******************************************/
 
-	sxi_major = 251;
+	sxi_major = 109;
 	sxi_minor = dev->num;
 
 	sdev->devno = MKDEV(sxi_major, sxi_minor);
@@ -379,11 +379,11 @@ static int __devexit sxi_remove(struct platform_device *pdev)
 static struct platform_driver plat_sxi_driver = 
 {
 	.probe      = sxi_probe,
-	.remove     = __devexit_p(sxi_remove),
+	.remove     = sxi_remove,
 	.driver     = 
 	{
-		.name    = "SXI",
-		.owner   = THIS_MODULE,
+		.name    = "sxi_sim",
+//		.owner   = THIS_MODULE,
 	},
 };
 

@@ -62,7 +62,7 @@
 #endif
 
 /* for debugging messages*/
-/*#define SXI_DEBUG*/
+#define SXI_DEBUG
 
 #undef PDEBUG
 #ifdef SXI_DEBUG
