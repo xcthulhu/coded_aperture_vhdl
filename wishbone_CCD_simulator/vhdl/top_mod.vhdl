@@ -15,10 +15,10 @@ entity top_mod is
       irq         : out   std_logic;
       -- Armadeus handshaking
       imx_data    : inout imx_chan;
-      imx_address :       std_logic_vector(11 downto 0);  -- LSB not used 
-      imx_cs_n    :       std_logic;
-      imx_oe_n    :       std_logic;
-      imx_eb3_n   :       std_logic;
+      imx_address : in std_logic_vector(11 downto 0);  -- LSB not used 
+      imx_cs_n    : in std_logic;
+      imx_oe_n    : in std_logic;
+      imx_eb3_n   : in std_logic;
       -- External pins
       a_in, b_in  : in    std_logic;
       SCLK        : in    std_logic;
