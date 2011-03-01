@@ -78,22 +78,27 @@ struct sxi_dev {
  */
 
 static void cb_init( struct sxi_cb *b ) {
+//	PDEBUG( "cb_init\n" );
 	b->head = b->tail = b->overflow = 0;
 }
 	
 static unsigned cb_count( struct sxi_cb *b ) {
-	return CIRC_SPACE_TO_END( b->head, b->tail, CB_SIZE );
+//	PDEBUG( "cb_count\n" );
+	return CIRC_CNT_TO_END( b->head, b->tail, CB_SIZE );
 }
 
 static u16 *cb_outp( struct sxi_cb *b ) {
+//	PDEBUG( "cb_outp\n" );
 	return b->data + b->tail;
 }
 
 static void cb_drop( unsigned n, struct sxi_cb *b ) {
+//	PDEBUG( "cb_drop\n" );
 	b->tail = ((b->tail + n) & (CB_SIZE-1));
 }
 
 static void cb_put( u16 d, struct sxi_cb *b ) {
+//	PDEBUG( "cb_put\n" );
 	if( CIRC_SPACE( b->head, b->tail, CB_SIZE ) == 0 ) {
 		b->overflow += 1;
 		return;
@@ -103,6 +108,7 @@ static void cb_put( u16 d, struct sxi_cb *b ) {
 }
 
 static unsigned cb_space( struct sxi_cb *b ) {
+//	PDEBUG( "cb_space\n" );
 	return CIRC_SPACE( b->head, b->tail, CB_SIZE );
 }
 	
@@ -116,8 +122,11 @@ ssize_t sxi_read(struct file *fildes, char __user *buff,
 	struct sxi_dev *ldev = fildes->private_data;
 	ssize_t retval = 0;
 	
+	if( count & 1 ) return -EINVAL;			/* odd numbers not allowed */
 	if( ldev->ccd_clocks.overflow ) return -EPIPE;	/* input buffer overflow */
 
+//	PDEBUG( "cb_count %d\n", cb_count( &ldev->ccd_clocks));
+	
 	while( cb_count( &ldev->ccd_clocks) == 0 ) {	/* block */
 		if(wait_event_interruptible(ldev->wait, (cb_count( &ldev->ccd_clocks))))
 			return -ERESTARTSYS;
@@ -148,6 +157,8 @@ ssize_t sxi_write(struct file *fildes, const char __user *buff,
 {
 	struct sxi_dev *ldev = fildes->private_data;
 	ssize_t retval = 0;
+
+	if( count & 1 ) return -EINVAL;			/* odd numbers not allowed */
 
 	/* If buffer is full, reader should be awake, so yield */
 	
@@ -204,6 +215,12 @@ static struct file_operations sxi_fops = {
 static irqreturn_t sxi_interrupt(int irq, void *dev_id)
 {
 	struct sxi_dev *ldev = dev_id;
+//	static int got_one;
+	
+//	if( !got_one) {
+//		got_one = 1;
+//		PDEBUG( "Got interrupt %s\n" , irq );
+//	}
 
 	while( ioread16(ldev->membase+SXI_STATUS) & FIFO_DATA_AVAILABLE)
 		cb_put( ioread16(ldev->membase+SXI_FIFO), &ldev->ccd_clocks );
@@ -238,7 +255,7 @@ static int sxi_probe(struct platform_device *pdev)
 		printk(KERN_WARNING "For %s id:%d doesn't match "
 			   "with id read %d,\n is device present ?\n",
 			   dev->name,dev->idnum,data);
-		goto error_id;
+//		goto error_id;
 	}
 
 	/********************************************/
@@ -269,7 +286,7 @@ static int sxi_probe(struct platform_device *pdev)
 	/* Get the major and minor device numbers */
 	/******************************************/
 
-	sxi_major = 251;
+	sxi_major = 109;
 	sxi_minor = dev->num;
 
 	sdev->devno = MKDEV(sxi_major, sxi_minor);
@@ -376,11 +393,11 @@ static int __devexit sxi_remove(struct platform_device *pdev)
 static struct platform_driver plat_sxi_driver = 
 {
 	.probe      = sxi_probe,
-	.remove     = __devexit_p(sxi_remove),
+	.remove     = sxi_remove,
 	.driver     = 
 	{
-		.name    = "SXI",
-		.owner   = THIS_MODULE,
+		.name    = "sxi_sim",
+//		.owner   = THIS_MODULE,
 	},
 };
 
