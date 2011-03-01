@@ -1,10 +1,10 @@
-OBJS = blink.o
-PROGS = blink_tb
-SIMS = blink_tb.vcd
-BITMAP=blink.bit
+OBJS = clocksim.o clocksim_decs.o
+PROGS = clocksim_tb
+SIMS = clocksim_tb.vcd
+BITMAP=#clocksim.bit
 DEVEL_BASE=../..
 COMP=ghdl
-VHDL_C=$(COMP) -i 
+VHDL_C=$(COMP) -i -P$(UNISIM_VHDL)
 
 # Read the following document for details about using the Xilinx unisim library and ghdl
 # http://www.dossmatik.de/ghdl/ghdl_unisim_eng.pdf
@@ -20,26 +20,26 @@ RMDIR=rm -rf
 all: $(OBJS) $(PROGS) $(SIMS) $(BITMAP)
 
 $(UNISIM) : 
-	$(MAKE) -C ../unisim all
+	$(MAKE) -C $(UNISIM_VHDL) all
 
 %.o : %.vhdl $(UNISIM)
 	$(VHDL_C) $< 
 
-blink_tb : blink_tb.vhdl blink.o
+%_tb : %_tb.vhdl %.o
 	$(VHDL_C) $<
 	$(VHDL_E) $@
 
-blink_tb.vcd : blink_tb blink.o
+%_tb.vcd : %_tb %.o
 	$(VHDL_R) $< --vcd=$@
 
 # Make instructions creating a bitmap from xilinx synthesis tools
 # adapted from http://www.excamera.com/sphinx/fpga-makefile.html
 project=blink
-top_module=Clk_div_led
+top_module=clocksim
 vendor=xilinx
 family=spartan3s
 part=xc3s200a-4ft256
-files=blink.vhdl
+files=clocksim.vhdl
 include $(DEVEL_BASE)/xilinx.mk
 
 # Install the bitmap on the armadeus, by loading into the FPGA
