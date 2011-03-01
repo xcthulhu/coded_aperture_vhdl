@@ -1,5 +1,5 @@
 # download the bitmap
 tftp -g -r BITMAP IP &
-sleep 5
+sleep 10
 # load the bitmap into the fpga
 load_fpga BITMAP
