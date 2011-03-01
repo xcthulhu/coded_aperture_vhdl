@@ -86,9 +86,13 @@ begin
         if(wbw.c.address(1 downto 0) = "00") then
           readdata(asize-1 downto 0)
             <= irq_mask(asize-1 downto 0);
+          readdata(readdata'high downto asize)
+            <= (others => '0');
         elsif(wbw.c.address(1 downto 0) = "01") then
           readdata(asize-1 downto 0)
             <= irq_pend(asize-1 downto 0);
+          readdata(readdata'high downto asize)
+            <= (others => '0');
         elsif(wbw.c.address(1 downto 0) = "10") then
           readdata <= id;
         else
