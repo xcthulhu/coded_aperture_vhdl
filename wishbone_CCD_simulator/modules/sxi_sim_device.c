@@ -50,14 +50,19 @@ static struct plat_sxi_port plat_sxi_data = {
 	.idoffset = 0x00 * (16 / 8)
 };
 
+static void device_release(struct device * dev)
+{
+	/* nothing to do here, but rmmod gets upset without this */
+}
+
 static struct platform_device plat_sxi_device = {
 	.name = "sxi_sim",
 	.id = 0,
 	.dev = {
-		.platform_data = &plat_sxi_data
+		.platform_data = &plat_sxi_data,
+		.release = device_release
 	},
 };
-
 
 static int __init sxi_init(void)
 {
