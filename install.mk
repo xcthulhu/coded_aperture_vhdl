@@ -1,7 +1,7 @@
 .PHONY=install_bitmap install_modules install_device
 
 IP=192.168.0.3
-ETHERNET_DEVICE=eth0
+ETHERNET_DEVICE=eth1
 
 install_bitmap : $(BITMAP)
 	cp $(BITMAP) /srv/tftp
