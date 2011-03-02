@@ -22,7 +22,7 @@ $(UNISIM) :
 
 # Make instructions creating a bitmap from xilinx synthesis tools
 # adapted from http://www.excamera.com/sphinx/fpga-makefile.html
-project=fpga_debug
+project=fpgaregs_debug
 top_module=top_mod
 vendor=xilinx
 family=spartan3s
