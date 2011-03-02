@@ -32,7 +32,7 @@ begin
 			when "000000000010" => read_data <= x"1337";
 			when "000000000011" => read_data <= x"D0D0";
 			when "000000000100" => read_data <= x"DEAD";
-			when others => null;
+			when others => read_data <= (others => '0');
 		end case;
 	end if;
   end process;
