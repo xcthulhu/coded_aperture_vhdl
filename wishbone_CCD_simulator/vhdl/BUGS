@@ -1,2 +1,3 @@
 • ccd_simulator.ucf does not implement LVDS for a_in, b_in, SCLK and STROBE
 • top_mod.vhdl defines fifo length at 2**8; idealy, we want this length to be 2**9.  However, the Xilinx tools refuse to compile this.  Research into how to use the Spartan3a memory block is necessary
+• fpgaregs does not report the correct address for anything
