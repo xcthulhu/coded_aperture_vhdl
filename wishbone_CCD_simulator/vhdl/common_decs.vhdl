@@ -10,9 +10,6 @@ package common_decs is
   subtype write_chan is std_logic_vector(chan_size-1 downto 0);
   subtype imx_chan is std_logic_vector(chan_size-1 downto 0);
 
-  constant irq_port_size : natural := 1;  -- Size of IRQ channel
-  subtype irq_port is std_logic_vector(irq_port_size-1 downto 0);
-
   -- Syscon
   type syscon is
   record

@@ -19,7 +19,7 @@ entity wb_fifo is
       -- Write Instruction bit
       wr_en   : in  std_logic;
       -- IRQ System
-      irqport : out irq_port;
+      irqport : out write_chan;
       -- Wishbone Interaction system
       wbw     : in  wbws;
       wbr     : out wbrs

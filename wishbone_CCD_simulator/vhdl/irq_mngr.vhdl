@@ -33,7 +33,7 @@ entity irq_mngr is
       wbw     : in  wbws;
       wbr     : out wbrs;
       -- irq from other IP
-      irqport : in  irq_port
+      irqport : in  write_chan
       );
 end entity;
 
@@ -41,12 +41,10 @@ end entity;
 architecture RTL of irq_mngr is
 -- ----------------------------------------------------------------------------
 
-  signal irq_r, irq_old, irq_pend, irq_ack, irq_mask : irq_port;
-  signal readdata : read_chan;
-  signal rd_ack   : std_logic;
-  signal wr_ack   : std_logic;
-
-  constant asize : natural := minimum(irq_port_size,chan_size);
+  signal irq_r, irq_old, irq_pend, irq_ack, irq_mask : write_chan;
+  signal readdata                                    : read_chan;
+  signal rd_ack                                      : std_logic;
+  signal wr_ack                                      : std_logic;
 begin
 
 --  External signals synchronization process
@@ -68,7 +66,7 @@ begin
     if(sysc.reset = '1') then
       irq_pend <= (others => '0');
     elsif(rising_edge(sysc.clk)) then
-      irq_pend <= (irq_pend or ((irq_r and (not irq_old)) and irq_mask)) and (not irq_ack);
+      irq_pend <= (not irq_ack) and (irq_pend or (irq_r and (not irq_old) and irq_mask));
     end if;
   end process;
 
@@ -84,16 +82,10 @@ begin
       if check_wb0(wbw) then
         rd_ack <= '1';
         if(wbw.c.address(1 downto 0) = "00") then
-          readdata(asize-1 downto 0)
-            <= irq_mask(asize-1 downto 0);
-          readdata(readdata'high downto asize)
-            <= (others => '0');
+          readdata <= irq_mask;
         elsif(wbw.c.address(1 downto 0) = "01") then
-          readdata(asize-1 downto 0)
-            <= irq_pend(asize-1 downto 0);
-          readdata(readdata'high downto asize)
-            <= (others => '0');
-        elsif(wbw.c.address(1 downto 0) = "10") then
+          readdata <= irq_pend;
+        elsif(wbw.c.address(1 downto 0) = "11") then
           readdata <= id;
         else
           readdata <= (others => '0');
@@ -115,9 +107,9 @@ begin
       if check_wb1(wbw) then
         wr_ack <= '1';
         if(wbw.c.address(1 downto 0) = "00") then
-          irq_mask <= wbw.c.writedata(irq_port_size-1 downto 0);
+          irq_mask <= wbw.c.writedata;
         elsif(wbw.c.address(1 downto 0) = "01") then
-          irq_ack <= wbw.c.writedata(irq_port_size-1 downto 0);
+          irq_ack <= wbw.c.writedata;
         end if;
       end if;
     end if;

@@ -55,7 +55,7 @@ architecture RTL of top_mod is
       sysc    : in  syscon;
       wbw     : in  wbws;
       wbr     : out wbrs;
-      irqport : in  irq_port;
+      irqport : in  write_chan;
       irq     : out std_logic
       );
   end component;
@@ -81,7 +81,7 @@ architecture RTL of top_mod is
         sysc         : in  syscon;
         a_in, b_in,
         SCLK, STROBE : in  std_logic;
-        irqport      : out irq_port;
+        irqport      : out write_chan;
         wbw          : in  wbws;
         wbr          : out wbrs
         );
@@ -91,7 +91,7 @@ architecture RTL of top_mod is
   signal xa_in, xb_in, xSCLK, xSTROBE : std_logic;
 
   -- IRQ communication
-  signal irqport : irq_port;
+  signal irqport : write_chan;
 
   ---- Intercon
   signal sysc, irq_sysc, fifo_sysc, wsysc : syscon;
