@@ -4,24 +4,30 @@ irq:
 
 Id: 	"0001000000001001" (0x1009)
 
-Lowest Addrbits: 2
+MUX bits: 7 downto 2
+MUX value: "000000"
 
-Regs:	"00"	mask		rw
-	"01"	pend/ack	rw
-	"10"	id		r
-
-High bits:	"000000"
+Control bits: 1 downto 0
+Regs:	BIN	NAME		MODE	FPGAREGS_ADDR
+	"00"	mask		rw	0
+	"01"	pend/ack	rw	2
+	"10"	"0xBAD0"	r	4
+	"11"	id		r	6
 
 fifo:
 
 Id:	"0000010100011000" (0x0523)
 
-Lowest Addrbits: 2
+MUX bits: 7 downto 2
+MUX value: "000001"	
 
-Regs:	"10"	data		r
-	"01"	status		r
-	"00"	id		r
+Control bits: 1 downto 0
+Regs:	BIN	NAME		MODE	FPGAREGS_ADDR
+	"00"	id		r	8
+	"01"	fifo_count	r	A
+	"10"	data		r	C
+	"11"	"0xBAD2"	r	D
 
-High bits:	"000001"	
+- fifo_count is a 16 bit unsigned integer, representing the current size of the queue
 
-The LSB of the FIFO status register is 1 if data available.
+DEFAULT : any other address is "0xDEAD"
