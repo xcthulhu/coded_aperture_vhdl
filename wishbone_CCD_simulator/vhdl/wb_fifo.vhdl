@@ -1,4 +1,4 @@
--- wishbone fifo controller
+-- Wishbone fifo controller
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -8,18 +8,15 @@ use work.common_decs.all;
 entity wb_fifo is
   generic
     (
-      id : device_id := x"0523";
-    addrdepth : integer := 10
+      id        : device_id := x"0523";
+      addrdepth : integer   := 10
       );
   port
     (
       sysc    : in  syscon;
-      -- Data Input
-      din     : in  read_chan;
-      -- Write Instruction bit
-      wr_en   : in  std_logic;
-      -- IRQ System
-      irqport : out write_chan;
+      din     : in  read_chan;          -- Data Input
+      wr_en   : in  std_logic;          -- Write Instruction bit
+      irqport : out write_chan;         -- IRQ System
       -- Wishbone Interaction system
       wbw     : in  wbws;
       wbr     : out wbrs
@@ -78,21 +75,22 @@ begin
       else
         irqport <= (others => '0');
       end if;
-      
+
       if (check_wb0(wbw)) then
         case addr is
-          when "10" =>                  -- Read data
-            rd_en    <= '1';
-            readdata <= dout;
-          when "01" =>                  -- Report whether empty
-            rd_en    <= '0';
-            readdata <= (readdata'low => empty, others => '0');
           when "00" =>                  -- ID
             rd_en    <= '0';
             readdata <= id;
-          when "11" =>                  -- ID
+          when "01" =>                  -- Read Count
+            rd_en <= '0';
+            readdata <= std_logic_vector(
+              resize(to_unsigned(data_count), chan_size));
+          when "10" =>                  -- Read data
+            rd_en    <= '1';
+            readdata <= dout;
+          when "11" =>                  -- Error
             rd_en    <= '0';
-            readdata <= (others => '0');
+            readdata <= x"BAD2";
           when others => null;
         end case;
       else
