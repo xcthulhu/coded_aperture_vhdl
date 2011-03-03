@@ -41,10 +41,8 @@ begin
   fifo_wbw.c <= wwbw.c;
 
 -- Gate strobe to slaves.
-  irq_wbw.cycle <= wwbw.cycle when is_slctd(wwbw, irqa)
-                   else '0';
-  fifo_wbw.cycle <= wwbw.cycle when is_slctd(wwbw, fifoa)
-                    else '0';
+  irq_wbw.cycle  <= wwbw.cycle when is_slctd(wwbw, irqa)  else '0';
+  fifo_wbw.cycle <= wwbw.cycle when is_slctd(wwbw, fifoa) else '0';
 
 -- Multiplex data and ack from slaves.
 -- Respond with 0xdead if no slave selected.

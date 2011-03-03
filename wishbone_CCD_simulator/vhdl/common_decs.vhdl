@@ -9,6 +9,8 @@ package common_decs is
   subtype read_chan is std_logic_vector(chan_size-1 downto 0);
   subtype write_chan is std_logic_vector(chan_size-1 downto 0);
   subtype imx_chan is std_logic_vector(chan_size-1 downto 0);
+  constant addr_size : natural := 12;   -- Size of address channel
+  subtype addr is std_logic_vector(addr_size-1 downto 0);
 
   -- Syscon
   type syscon is
@@ -28,7 +30,7 @@ package common_decs is
   record
     strobe    : std_logic;              -- Data Strobe
     writing   : std_logic;              -- Busy writing
-    address   : std_logic_vector (12 downto 0);  -- Address bus
+    address   : addr;  -- Address bus
     writedata : write_chan;             -- Data bus written by wishbone    
   end record;
 
@@ -51,7 +53,7 @@ package common_decs is
 
   type imx_in is
   record
-    address : std_logic_vector(11 downto 0);  -- LSB not used 
+    address : addr;  -- LSB not used 
     cs_n    : std_logic;
     oe_n    : std_logic;
     eb3_n   : std_logic;
