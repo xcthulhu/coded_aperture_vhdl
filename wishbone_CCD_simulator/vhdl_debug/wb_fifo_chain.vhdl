@@ -1,1 +1,0 @@
-../vhdl/wb_fifo_chain.vhdl
