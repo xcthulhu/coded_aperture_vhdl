@@ -9,7 +9,7 @@ entity intercon is
     (
       -- Global Signals
       sysc : in syscon;
-
+      
       -- IRQ signals
       irq_wbr  : in  wbrs;
       irq_wbw  : out wbws;
