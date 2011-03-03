@@ -11,7 +11,6 @@
 --  Description   :  This is the top file of the IP
 -------------------------------------------------------------------------------
 
-
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.std_logic_signed.all;
@@ -41,14 +40,17 @@ end entity;
 architecture RTL of irq_mngr is
 -- ----------------------------------------------------------------------------
 
-  signal irq_r, irq_old, irq_pend, irq_ack, irq_mask : write_chan;
-  signal readdata                                    : read_chan;
-  signal rd_ack                                      : std_logic;
-  signal wr_ack                                      : std_logic;
+  signal irq_r, irq_old, irq_pend,
+    irq_ack, irq_mask : write_chan;
+  signal readdata       : read_chan;
+  signal rd_ack, wr_ack : std_logic;
+  signal irqaddr        : std_logic_vector(1 downto 0);
 begin
+-- IRQ addressing bits
+  irqaddr <= wbw.c.address(1 downto 0);
 
 --  External signals synchronization process
-  process(sysc.clk, sysc.reset)
+  ext_sync : process(sysc.clk, sysc.reset)
   begin
     if(sysc.reset = '1') then
       irq_r   <= (others => '0');
@@ -59,9 +61,8 @@ begin
     end if;
   end process;
 
-
 --  Interruption requests latching process on rising edge
-  process(sysc.clk, sysc.reset)
+  irq_latch : process(sysc.clk, sysc.reset)
   begin
     if(sysc.reset = '1') then
       irq_pend <= (others => '0');
@@ -70,9 +71,8 @@ begin
     end if;
   end process;
 
-
---  Register reading process
-  process(sysc.clk, sysc.reset)
+--  Register reading logic
+  readdata_logic : process(sysc.clk, sysc.reset)
   begin
     if(sysc.reset = '1') then
       rd_ack   <= '0';
@@ -81,21 +81,18 @@ begin
       rd_ack <= '0';
       if check_wb0(wbw) then
         rd_ack <= '1';
-        if(wbw.c.address(1 downto 0) = "00") then
-          readdata <= irq_mask;
-        elsif(wbw.c.address(1 downto 0) = "01") then
-          readdata <= irq_pend;
-        elsif(wbw.c.address(1 downto 0) = "11") then
-          readdata <= id;
-        else
-          readdata <= (others => '0');
-        end if;
+        case irqaddr is
+          when "00"   => readdata <= irq_mask;
+          when "01"   => readdata <= irq_pend;
+          when "11"   => readdata <= id;
+          when others => readdata <= x"BAD0";
+        end case;
       end if;
     end if;
   end process;
 
 --  Register update process
-  process(sysc.clk, sysc.reset)
+  update_proc : process(sysc.clk, sysc.reset)
   begin
     if(sysc.reset = '1') then
       irq_ack  <= (others => '0');
@@ -106,16 +103,17 @@ begin
       wr_ack  <= '0';
       if check_wb1(wbw) then
         wr_ack <= '1';
-        if(wbw.c.address(1 downto 0) = "00") then
-          irq_mask <= wbw.c.writedata;
-        elsif(wbw.c.address(1 downto 0) = "01") then
-          irq_ack <= wbw.c.writedata;
-        end if;
+        case irqaddr is
+          when "00"   => irq_mask <= wbw.c.writedata;
+          when "01"   => irq_ack  <= wbw.c.writedata;
+          when others => null;
+        end case;
       end if;
     end if;
   end process;
 
-  irq <= irq_level when(conv_integer(irq_pend) /= 0 and sysc.reset = '0')
+  irq <= irq_level when(conv_integer(irq_pend) /= 0
+                        and sysc.reset = '0')
          else not irq_level;
   wbr.ack      <= rd_ack or wr_ack;
   wbr.readdata <= readdata when check_wb0(wbw)
