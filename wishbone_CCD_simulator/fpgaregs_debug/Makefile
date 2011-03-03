@@ -1,6 +1,6 @@
 WORK = CCD
 OBJS = common_decs.o top_mod.o
-BITMAP=fpga_debug.bit
+BITMAP=fpgaregs_debug.bit
 DEVEL_BASE=../../
 
 # Read the following document for details about using the Xilinx unisim library and ghdl
