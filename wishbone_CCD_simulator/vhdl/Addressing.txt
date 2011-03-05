@@ -26,7 +26,7 @@ Regs:	BIN	NAME		MODE	FPGAREGS_ADDR
 	"00"	id		r	8
 	"01"	fifo_count	r	A
 	"10"	data		r	C
-	"11"	"0xBAD2"	r	D
+	"11"	"0xBAD2"	r	E
 
 - fifo_count is a 16 bit unsigned integer, representing the current size of the queue
 
