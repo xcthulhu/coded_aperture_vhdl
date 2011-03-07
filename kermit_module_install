@@ -1,3 +1,5 @@
+# remove an old module
+rmmod MODULE
 # download the bitmap
 tftp -g -r MODULE IP &
 sleep 5
