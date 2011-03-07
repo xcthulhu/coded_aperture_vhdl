@@ -22,3 +22,11 @@ install_device :
             -e 's/MAJOR/$(MAJOR)/' \
             -e 's/MINOR/$(MINOR)/' $(DEVEL_BASE)/kermit_device_install \
 	| kermit -q -y $(DEVEL_BASE)/configs/kermrc -c
+
+install_programs : $(PROGS)
+	cp $(PROGS) /srv/tftp
+	ifconfig $(ETHERNET_DEVICE) $(IP) up
+	for i in $(PROGS) ; do \
+		sed -e "s/PROGRAM/$$i/g" -e 's/IP/$(IP)/' $(DEVEL_BASE)/kermit_prog_install \
+		| kermit -q -y $(DEVEL_BASE)/configs/kermrc -c ; \
+	done

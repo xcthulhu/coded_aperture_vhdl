@@ -1,0 +1,3 @@
+# download the bitmap
+tftp -g -r PROGRAM IP &
+chmod +x PROGRAM
