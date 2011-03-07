@@ -115,6 +115,7 @@ void readout()
 int main()
 {
 	printf( "#SCLK SEQA SEQB STROBE\n" );
+	printf( "0 0 0 0\n" );
 	frame();
 //	readout();
 	return 0;
