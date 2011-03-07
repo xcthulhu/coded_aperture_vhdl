@@ -8,7 +8,6 @@
 #define DEV "/dev/sxi_clocks"
 #define ME "sxi_clocks"
 
-
 // We need to avoid page faults during acquision.
 // Otherwise we could lose data and get an EPIPE.
 // The best approach would be to use a realtime kernel
@@ -28,7 +27,6 @@ uint16_t *getbuf( size_t size )
 	
 	return memset( b, 0xaa, bytes );
 }
-
 
 // read in data
 
@@ -56,13 +54,13 @@ uint16_t *getdata( size_t size )
 			fprintf( stderr, "%s: Buffer overflow occurred in driver\n", ME );
 			exit( EXIT_FAILURE );
 		}
-		perror( me );
+		perror( ME );
 		exit( EXIT_FAILURE );
 	}
 	
 	if( count < bytes ) {
-		fprintf( stderr, "%s: asked for %d bytes, but only read %d\n",
-			ME, bytes, count );
+		fprintf(stderr, "%s: asked for %d bytes, but only read %d\n",
+			ME, (int) bytes, (int) count );
 		exit( EXIT_FAILURE );
 	}
 	
@@ -77,7 +75,7 @@ uint16_t *getdata( size_t size )
 
 // write data out, free the buffer
 
-void putdata( uint_16 *b, size_t *n )
+void putdata( uint_16 * b, size_t * n )
 {
 	if( write( 1, b, n * sizeof( uint_16 )) < 0 ) {
 		perror( me );
