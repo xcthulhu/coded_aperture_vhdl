@@ -38,6 +38,8 @@ NET "imx_eb3_n" LOC="P9" | IOSTANDARD=LVCMOS18; # EB0N
 NET "imx_oe_n"  LOC="R9" | IOSTANDARD=LVCMOS18; # OEN
 # interrupt from fgpa to i.MX
 #NET "irq" LOC="T12"  | DRIVE=8 | IOSTANDARD=LVCMOS18; # INT
+# DTACK
+NET "imx_dtack" LOC="M1"  | IOSTANDARD=LVCMOS18 | DRIVE=8;#IO_L20P_3
 
 # LED
 #NET "led_o" LOC="C16"    | DRIVE=12 | IOSTANDARD=LVCMOS33;    #IO_L24P_1 
