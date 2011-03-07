@@ -1,4 +1,4 @@
-OBJS = clocksim.o clocksim_decs.o
+OBJS = rstgen_syscon.o common_decs.o clocksim_decs.o clocksim.o top_mod.o
 PROGS = clocksim_tb
 SIMS = clocksim_tb.vcd
 BITMAP=#clocksim.bit
@@ -11,7 +11,10 @@ VHDL_C=$(COMP) -i -P$(UNISIM_VHDL)
 UNISIM_VHDL=$(DEVEL_BASE)/unisim
 UNISIM=$(UNISIM_VHDL)/unisim-obj93.cf
 
-VHDL_E=$(COMP) -m -g -P$(UNISIM_VHDL) --warn-unused --ieee=synopsys 
+# C Library for VHDL
+C_VHDL=../../c_vhdl/c-obj/
+
+VHDL_E=$(COMP) -m -g -P$(UNISIM_VHDL) -P$(C_VHDL) --warn-unused --ieee=synopsys 
 
 VHDL_R=$(COMP) -r
 RM=rm -f
@@ -22,7 +25,10 @@ all: $(OBJS) $(PROGS) $(SIMS) $(BITMAP)
 $(UNISIM) : 
 	$(MAKE) -C $(UNISIM_VHDL) all
 
-%.o : %.vhdl $(UNISIM)
+$(C_VHDL) :
+	$(MAKE) -C $(shell dirname $(C_VHDL)) all
+
+%.o : %.vhdl $(UNISIM) $(C_VHDL)
 	$(VHDL_C) $< 
 
 %_tb : %_tb.vhdl %.o

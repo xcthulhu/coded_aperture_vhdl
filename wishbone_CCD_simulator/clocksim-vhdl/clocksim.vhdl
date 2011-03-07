@@ -2,110 +2,102 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.numeric_std.all;
 
-library unisim;
-use unisim.Vcomponents.all;
-
 use work.clocksim_decs.all;
+use work.common_decs.all;
 
 entity clocksim is
   generic (div : natural := 100);
-  port (CLK            : in  std_logic;
-        SCLK_anode     : out std_logic;
-        SCLK_cathode   : out std_logic;
-        STROBE_anode   : out std_logic;
-        STROBE_cathode : out std_logic;
-        A_anode        : out std_logic;
-        A_cathode      : out std_logic;
-        B_anode        : out std_logic;
-        B_cathode      : out std_logic);
+  port (sysc               : in  syscon;
+        SCLK, STROBE, A, B : out std_logic);
 end;
 
 architecture RTL of clocksim is
-  signal n_SCLK, SCLK, STROBE, A, B : std_logic;
-  signal state                      : sig := (others => '0');
+  signal iSCLK : std_logic;
+  signal state : sig := (others => '0');
+  signal bit : natural range 0 to 7;
+  variable mode : string(1 to 20);
 begin
-  -- XILINX OUTPUT
-  n_SCLK <= not SCLK;
-
-  SCLK_LVDS_OUT : OBUFDS
-    port map (I  => n_SCLK,
-              O  => SCLK_anode,
-              OB => SCLK_cathode);
-
-  STROBE_LVDS_OUT : OBUFDS
-    port map (I  => STROBE,
-              O  => STROBE_anode,
-              OB => STROBE_cathode);
-
-  A_LVDS_OUT : OBUFDS
-    port map (I  => A,
-              O  => A_anode,
-              OB => A_cathode);
-
-  B_LVDS_OUT : OBUFDS
-    port map (I  => B,
-              O  => B_anode,
-              OB => B_cathode);
+  -- Connect external to internal signals
+  SCLK <= iSCLK;
+  A <= state(bit);
+  B <= state(bit+8);
 
   -- Set SCLK behavior
-  sclocker : process(Clk)
-    variable i : natural range 0 to div := 0;
+  sclocker : process(sysc.reset, sysc.clk)
+    constant freq : natural := 15;
+    variable i    : natural range 0 to div;
   begin
-    if (rising_edge(Clk)) then
+    if (sysc.reset = '1') then
+      iSCLK <= '0';
+      i     := 0;
+    elsif (rising_edge(sysc.clk)) then
       if i < div then
-        i    := i + 1;
-        SCLK <= '0';
+        i := i + 1;
       else
-        i    := 0;
-        SCLK <= '1';
+        i     := 0;
+        iSCLK <= not iSCLK;
       end if;
     end if;
   end process;
 
   -- Set Strobe behavior
-  strober : process(SCLK)
-    constant freq : natural                 := 7;
-    variable i    : natural range 0 to freq := 0;
+  strober : process(sysc.reset, iSCLK)
+    constant freq : natural := 14;
+    variable i    : natural range 0 to freq;
   begin
-    if (rising_edge(SCLK)) then
+    if (sysc.reset = '1') then
+      STROBE <= '1';
+      i      := 0;
+    elsif (iSCLK'event) then
       if i < freq then
         i      := i + 1;
-        STROBE <= '0';
+        STROBE <= '1';
       else
         i      := 0;
-        STROBE <= '1';
+        STROBE <= '0';
       end if;
     end if;
   end process;
 
-  -- Set A and B behavior based on state
-  A_and_B : process(SCLK)
-    variable bit : natural range 0 to 7 := 7;
+  -- Serialize state using A and B
+  A_and_B : process(sysc.reset, iSCLK)
   begin
-    if (rising_edge(SCLK)) then
-      A <= state(bit);
-      B <= state(bit+8);
-      if (bit = 0) then
-        bit := 7;
-      else
-        bit := bit - 1;
+    if (sysc.reset = '1') then
+      bit <= 7;
+    elsif (falling_edge(iSCLK)) then
+      if (bit = 0) then bit <= 7;
+      else bit <= bit - 1;
       end if;
     end if;
   end process;
 
   -- Use a stack machine to determine state behavior
-  state_proc : process(SCLK)
-    variable stack               : MODE_STACK                      := (others => FRAME);
-    variable idx                 : natural range 0 to STACK_SIZE-1 := 0;
-    variable ft, row_down        : std_logic                       := '0';
-    variable down_pixel          : natural range 0 to 2            := 0;
-    variable pixel_step, pm_step : natural range 0 to 7            := 0;
+  state_proc : process(sysc.reset, iSCLK)
+    variable stack        : MODE_STACK := (others => FRAME);
+    variable idx          : natural range 0 to STACK_SIZE-1;
+    variable ft, row_down : std_logic;
+    variable down_pixel   : natural range 0 to 2;
+    variable pixel_step,
+      pm_step : natural range 0 to 7;
     variable frame_downs, readout_rows,
-      row_pixels : natural range 0 to 1280 := 0;
+      row_pixels : natural range 0 to 1280;
   begin
-    if (rising_edge(SCLK)) then
+    if (sysc.reset = '1') then
+      state <= (others => '0');
+      stack        := (others => FRAME);
+      ft           := '0';
+      row_down     := '0';
+      idx          := 0;
+      down_pixel   := 0;
+      pixel_step   := 0;
+      pm_step      := 0;
+      frame_downs  := 0;
+      readout_rows := 0;
+      row_pixels   := 0;
+    elsif (rising_edge(iSCLK)) then
       case stack(idx) is
         when FRAME =>
+          --printf("FRAME ");
           if (frame_downs < 1280) then
             ft          := '1';
             idx         := idx + 1;
@@ -119,6 +111,7 @@ begin
           end if;
           
         when READOUT =>
+          --printf("READOUT ");
           if (readout_rows < 1280) then
             idx          := idx + 1;
             stack(idx)   := ROW;
@@ -130,6 +123,7 @@ begin
           end if;
           
         when ROW =>
+          --printf("ROW ");
           if (row_down = '0') then
             ft         := '0';
             idx        := idx + 1;
@@ -146,6 +140,7 @@ begin
           end if;
           
         when DOWN =>
+          --printf("DOWN ");
           case down_pixel is
             when 0 =>
               state(P1VI) <= '1';
@@ -172,6 +167,7 @@ begin
           end case;
           
         when PIXEL_MAYBE =>
+          --printf("PIXEL_MAYBE ");
           if (pm_step /= 7) then
             if (ft = '1') then
               idx        := idx + 1;
@@ -186,6 +182,7 @@ begin
           end if;
           
         when PIXEL =>
+          --printf("PIXEL ");
           case pixel_step is
             when 0 =>
               state(P1H)    <= '1';
