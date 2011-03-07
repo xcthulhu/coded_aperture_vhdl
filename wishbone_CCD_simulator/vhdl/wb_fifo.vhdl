@@ -2,6 +2,7 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 use work.common_decs.all;
 
@@ -84,7 +85,7 @@ begin
           when "01" =>                  -- Read Count
             rd_en <= '0';
             readdata <= std_logic_vector(
-              resize(to_unsigned(data_count), chan_size));
+              resize(unsigned(data_count),chan_size));
           when "10" =>                  -- Read data
             rd_en    <= '1';
             readdata <= dout;
