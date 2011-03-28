@@ -2,6 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.numeric_std.all;
 use work.common_decs.all;
+use work.clocksim_decs.all;
 
 library unisim;
 use unisim.Vcomponents.all;
@@ -10,19 +11,26 @@ entity top_mod is
   port
     (
       -- External Clock
-      clk         : in    std_logic;
+      clk                     : in    std_logic;
       -- Interupt
-      irq         : out   std_logic;
+      irq                     : out   std_logic;
       -- Armadeus handshaking
-      imx_data    : inout imx_chan;
-      imx_address : in std_logic_vector(11 downto 0);  -- LSB not used 
-      imx_cs_n    : in std_logic;
-      imx_oe_n    : in std_logic;
-      imx_eb3_n   : in std_logic;
+      imx_data                : inout imx_chan;
+      imx_address             : in    std_logic_vector(11 downto 0);  -- LSB not used 
+      imx_cs_n                : in    std_logic;
+      imx_oe_n                : in    std_logic;
+      imx_eb3_n               : in    std_logic;
       -- External pins
-      a_in, b_in  : in    std_logic;
-      SCLK        : in    std_logic;
-      STROBE      : in    std_logic
+      ---- Inputs
+      a_in, a_inb,
+      b_in, b_inb             : in    std_logic;
+      SCLK_in, SCLK_inb       : in    std_logic;
+      STROBE_in, STROBE_inb   : in    std_logic;
+      ---- Outputs
+      a_out, a_outb,
+      b_out, b_outb           : out   std_logic;
+      SCLK_out, SCLK_outb     : out   std_logic;
+      STROBE_out, STROBE_outb : out   std_logic
       );
 end entity;
 
@@ -87,8 +95,15 @@ architecture RTL of top_mod is
         );
   end component;
 
+  component clocksim is
+    generic (div : natural := 100);
+    port (sysc               : in  syscon;
+          SCLK, STROBE, A, B : out std_logic);
+  end component;
+
   -- External Pins
-  signal xa_in, xb_in, xSCLK, xSTROBE : std_logic;
+  signal xa_in, xb_in, xSCLK_in, xSTROBE_in : std_logic;
+  signal xa_out, xb_out, xSCLK_out, xSTROBE_out : std_logic;
 
   -- IRQ communication
   signal irqport : write_chan;
@@ -105,64 +120,58 @@ begin
   imx.oe_n    <= imx_oe_n;
   imx.eb3_n   <= imx_eb3_n;
 
-  IO_L01P_0 : IBUF
-    port map (I => a_in,
-              O => xa_in);
+  IO_L01X_0 : IBUFDS
+    port map ( I  => a_in,
+               IB => a_inb,
+               O  => xa_in);
 
-  IO_L02P_0 : IBUF
-    port map (I => b_in,
-              O => xb_in);
+  IO_L03X_0 : IBUFDS
+    port map ( I  => b_in,
+               IB => b_inb,
+               O  => xb_in);
 
-  IO_L03P_0 : IBUF
-    port map (I => SCLK,
-              O => xSCLK);
+  IO_L07X_0 : IBUFDS
+    port map ( I  => SCLK_in,
+               IB => SCLK_inb,
+               O  => xSCLK_in);
 
-  IO_L04P_0 : IBUF
-    port map (I => STROBE,
-              O => xSTROBE);
+  IO_L15X_0 : IBUFDS
+    port map ( I  => STROBE_in,
+               IB => STROBE_inb,
+               O  => xSTROBE_in);
 
   rstgen00 : rstgen_syscon
     generic map (invert_reset => '0')
-    port map (
-      clk  => clk,
-      sysc => sysc
-      );
+    port map ( clk  => clk,
+               sysc => sysc);
 
   intercon00 : intercon
-    port map (
-      sysc      => sysc,
-      irq_wbr   => irq_wbr,
-      irq_wbw   => irq_wbw,
-      irq_sysc  => irq_sysc,
-      fifo_wbr  => fifo_wbr,
-      fifo_wbw  => fifo_wbw,
-      fifo_sysc => fifo_sysc,
-      wwbr      => wwbr,
-      wwbw      => wwbw,
-      wsysc     => wsysc
-      );
+    port map ( sysc      => sysc,
+               irq_wbr   => irq_wbr,
+               irq_wbw   => irq_wbw,
+               irq_sysc  => irq_sysc,
+               fifo_wbr  => fifo_wbr,
+               fifo_wbw  => fifo_wbw,
+               fifo_sysc => fifo_sysc,
+               wwbr      => wwbr,
+               wwbw      => wwbw,
+               wsysc     => wsysc);
 
   wrapper : wishbone_wrapper
-    port map (
-      sysc     => wsysc,
-      imx_data => imx_data,
-      imx      => imx,
-      wbw      => wwbw,
-      wbr      => wwbr
-      );
+    port map ( sysc     => wsysc,
+               imx_data => imx_data,
+               imx      => imx, 
+               wbw      => wwbw,
+               wbr      => wwbr);
 
   irq_mngr00 : irq_mngr
-    generic map (
-      id        => x"1009",
-      irq_level => '1'
-      )
-    port map (
-      sysc    => irq_sysc,
-      wbr     => irq_wbr,
-      wbw     => irq_wbw,
-      irqport => irqport,
-      irq     => irq
-      );
+    generic map ( id        => x"1009",
+                  irq_level => '1')
+    port map ( sysc    => irq_sysc,
+               wbr     => irq_wbr,
+               wbw     => irq_wbw,
+               irqport => irqport,
+               irq     => irq);
 
   wb_fifo_chain00 : wb_fifo_chain
     generic map (
@@ -173,11 +182,41 @@ begin
       sysc    => fifo_sysc,
       a_in    => xa_in,
       b_in    => xb_in,
-      STROBE  => xSTROBE,
-      SCLK    => xSCLK,
+      STROBE  => xSTROBE_in,
+      SCLK    => xSCLK_in,
       irqport => irqport,
       wbw     => fifo_wbw,
       wbr     => fifo_wbr
       );
 
+-- Output System
+  
+  SCLK_LVDS_OUT : OBUFDS
+    port map (I  => xSCLK_out,
+              O  => SCLK_out,
+              OB => SCLK_outb);
+
+  STROBE_LVDS_OUT : OBUFDS
+    port map (I  => xSTROBE_out,
+              O  => STROBE_out,
+              OB => STROBE_outb);
+
+  A_LVDS_OUT : OBUFDS
+    port map (I  => xa_out,
+              O  => a_out,
+              OB => a_outb);
+
+  B_LVDS_OUT : OBUFDS
+    port map (I  => xb_out,
+              O  => b_out,
+              OB => b_outb);
+
+  CLOCKSIMULATOR : clocksim
+    generic map (div => 100000000)
+    port map (sysc   => sysc,
+              SCLK   => xSCLK_out,
+              STROBE => xSTROBE_out,
+              A      => xa_out,
+              B      => xb_out);
+  
 end architecture;
